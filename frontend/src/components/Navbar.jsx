@@ -1,18 +1,81 @@
 import React from 'react'
 import logo from "../logo.jpg"
-import { Box, Button, Divider, HStack, Heading, Image, Input, InputGroup, InputLeftElement, InputRightElement, Link, LinkBox, Select, Stack, Text } from "@chakra-ui/react"
-import { SearchIcon } from "@chakra-ui/icons"
+import { Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, HStack, Heading, Image, Input, InputGroup, InputLeftElement, InputRightElement, Link, LinkBox, Select, Stack, Text, useDisclosure } from "@chakra-ui/react"
+import { HamburgerIcon, SearchIcon } from "@chakra-ui/icons"
 import "./navbar.css"
 import { AiOutlineShoppingCart, AiOutlineUser } from "react-icons/ai"
+import { GiHamburgerMenu } from "react-icons/gi";
+import { FaHome, FaUserCircle } from "react-icons/fa"
 const Navbar = () => {
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const btnRef = React.useRef()
+
 
     return (
         <Box>
+            <Drawer
+                isOpen={isOpen}
+                placement='left'
+                onClose={onClose}
+                finalFocusRef={btnRef}
+            >
+                <DrawerOverlay />
+                <DrawerContent >
+                    <DrawerCloseButton color={"white"} />
+                    <DrawerHeader color={"white"} bg={"rgb(35,47,62)"} p={"20px"}>
+                        <HStack>
+                            <FaUserCircle size={["30px"]} />
+                            <Text fontSize={"sm"}>Hello,Sign in</Text>
+                        </HStack>
+                    </DrawerHeader>
+
+                    <DrawerBody>
+                        <Stack spacing={1}>
+                            <Divider h={"4px"}/>
+                            <HStack py={3} justifyContent={"space-between"}>
+                                <Heading fontSize={"lg"}>Amazon Home</Heading>
+                                <FaHome size={"30px"}/>
+                            </HStack>
+                            <Divider h={"4px"}/>
+                            <Box>
+                                <Heading pt={3} fontSize={"lg"}>Categories</Heading>
+                                <Box className='category-side'><Text>Electronics</Text></Box>
+                                <Box className='category-side'><Text>Home & Kitchens</Text></Box>
+                                <Box className='category-side'><Text>Mobiles</Text></Box>
+                                <Box className='category-side'><Text>Men's Fashion</Text></Box>
+                                <Box className='category-side'><Text>Women's Fashion</Text></Box>
+                                <Box className='category-side'><Text>Kid's Fashion</Text></Box>
+                                <Box className='category-side'><Text>Beauty</Text></Box>
+                                <Box className='category-side'><Text>Health & Fitness</Text></Box>
+                                <Box className='category-side'><Text>Books</Text></Box>
+                            </Box>
+                            <Divider h={"4px"}/>
+                            <Box>
+                                <Heading fontSize={"lg"}>Trending</Heading>
+                                <Box className='category-side'><Text>Best Seller</Text></Box>
+                                <Box className='category-side'><Text>High Rating</Text></Box>
+                                <Box className='category-side'><Text>New Release</Text></Box>
+                            </Box>
+                            <Divider h={"4px"}/>
+                            <Box>
+                                <Heading fontSize={"lg"}>Setting</Heading>
+                                <Box className='category-side'><Text>Account</Text></Box>
+                                <Box className='category-side'><Text>High Rating</Text></Box>
+                                <Box className='category-side'><Text>Logout</Text></Box>
+                            </Box>
+                            <Divider h={"4px"}/>
+                        </Stack>
+
+                    </DrawerBody>
+
+                </DrawerContent>
+            </Drawer>
             <Box id='navbar' px={["0.5rem", "1rem", "2rem"]} py={["0.5rem"]}>
                 <HStack justifyContent={"space-between"} w="100%" color="white" alignItems={"center"}>
-                    <Box w={["50%", "50%", "20%"]} className="nav-logo" >
-                        <Image w={['80px', "100px"]} src={logo} alt="Logo" />
-                    </Box>
+                    <HStack w={["50%", "50%", "20%"]} className="nav-logo" >
+                        <Box onClick={onOpen} mt="0px" display={["block", "block", "none", "none"]}><GiHamburgerMenu size={"30px"} /></Box>
+                        <Image cursor={"pointer"} w={['80px', "100px"]} src={logo} alt="Logo" />
+                    </HStack>
                     <Box className="nav-search" w={['0px', '0px', "50%"]} display={["none", "none", "flex"]}>
                         <Box w={"100%"} className="input-group" >
                             <Select display={{ "xs": "none" }} color={"black"} bg={"whiteAlpha.900"} _hover={{ bg: "whiteAlpha.700" }} w='20%' name="" id="" borderRadius={"0px"} placeholder="All" borderLeftRadius={"10px"}></Select>
@@ -22,7 +85,7 @@ const Navbar = () => {
                     </Box>
                     <HStack w={["50%", "50%", "30%"]} gap={"10%"} justifyContent="end">
 
-                        <HStack border={"1px"} borderColor="black" className="nav-account test1" width={"-moz-fit-content"} >
+                        <HStack p={"3px"} border={"1px"} borderColor="black" className="nav-account test1" width={"-moz-fit-content"} >
                             <Text fontSize={"sm"} display={["none", "block", "block"]} >Hello, Sign in</Text>
                             <AiOutlineUser size={["40px"]} />
                         </HStack>
@@ -49,9 +112,7 @@ const Navbar = () => {
                                 </Stack>
                             </Box>
                         </Box>
-
-
-                        <HStack border={"1px"} borderColor="black" _hover={{ borderColor: "white" }} className="nav-cart" textAlign="end" width={"-moz-fit-content"}>
+                        <HStack p={"3px"} border={"1px"} borderColor="black" _hover={{ borderColor: "white" }} className="nav-cart" textAlign="end" width={"-moz-fit-content"}>
                             <Text fontSize={"sm"} display={["none", "none", "block"]}>Cart</Text>
                             <AiOutlineShoppingCart size={["40px"]} />
                         </HStack>
@@ -65,6 +126,23 @@ const Navbar = () => {
                     </Box>
                 </Box>
 
+            </Box>
+            <Box display={["none", "none", "block"]} className='category' color={"white"} bg={"rgb(35,47,62)"} p={"5px"} alignItems='center'>
+                <HStack justifyContent={"space-between"}  >
+                    <HStack className='category-hover' onClick={onOpen}>
+                        <HamburgerIcon />
+                        <Text>All</Text>
+                    </HStack>
+                    <Box className='category-hover'><Text>Mobiles</Text></Box>
+                    <Box className='category-hover'><Text>Electronics</Text></Box>
+                    <Box className='category-hover'><Text>Home & Kitchens</Text></Box>
+                    <Box className='category-hover'><Text>Men's Fashion</Text></Box>
+                    <Box className='category-hover'><Text>Women's Fashion</Text></Box>
+                    <Box className='category-hover'><Text>Kid's Fashion</Text></Box>
+                    <Box className='category-hover'><Text>Beauty</Text></Box>
+                    <Box className='category-hover'><Text>Health & fitness</Text></Box>
+                    <Box className='category-hover'><Text>Books</Text></Box>
+                </HStack>
             </Box>
         </Box >
     )

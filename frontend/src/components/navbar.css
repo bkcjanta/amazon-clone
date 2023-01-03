@@ -48,3 +48,21 @@
   .test2:hover{
     display: block;
   }
+
+  .category-hover {
+    border: 1px solid rgb(35,47,62);
+    padding: 5px;
+
+  }
+  .category-hover:hover{
+    border: 1px solid rgb(250, 251, 251);
+    cursor: pointer;
+
+  }
+  .category-side{
+    padding: 5px;
+  }
+   .category-side:hover{
+    background-color: antiquewhite;
+    cursor: pointer;
+  }
