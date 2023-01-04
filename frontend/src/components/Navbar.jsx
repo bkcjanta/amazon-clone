@@ -12,14 +12,15 @@ const Navbar = () => {
 
 
     return (
-        <Box>
+        <Box position={"sticky"} top={0} zIndex={4}>
             <Drawer
                 isOpen={isOpen}
                 placement='left'
                 onClose={onClose}
                 finalFocusRef={btnRef}
+                
             >
-                <DrawerOverlay />
+                <DrawerOverlay  />
                 <DrawerContent >
                     <DrawerCloseButton color={"white"} />
                     <DrawerHeader color={"white"} bg={"rgb(35,47,62)"} p={"20px"}>
@@ -70,7 +71,7 @@ const Navbar = () => {
 
                 </DrawerContent>
             </Drawer>
-            <Box id='navbar' px={["0.5rem", "1rem", "2rem"]} py={["0.5rem"]}>
+            <Box id='navbar' px={["0.5rem", "1rem", "2rem"]}  >
                 <HStack justifyContent={"space-between"} w="100%" color="white" alignItems={"center"}>
                     <HStack w={["50%", "50%", "20%"]} className="nav-logo" >
                         <Box onClick={onOpen} mt="0px" display={["block", "block", "none", "none"]}><GiHamburgerMenu size={"30px"} /></Box>
@@ -119,7 +120,7 @@ const Navbar = () => {
                     </HStack>
                 </HStack>
 
-                <Box className="mob-nav-search" w={"100%"} m="auto" display={["flext", "flex", "none"]} justifyContent='center' >
+                <Box className="mob-nav-search" w={"100%"} m="auto" mb="10px" display={["flext", "flex", "none"]} justifyContent='center' >
                     <Box w={"100%"} className="input-group" >
                         <Input borderLeftRadius={"10px"} pl='10px' color={"black"} bg={"white"} w={"90%"} type="text" borderRadius={"0px"} variant='unstyled' border={"0px"} />
                         <Button borderRadius={"0px"} backgroundColor={"yellow.400"} _hover={{ bg: "yellow.500" }} borderRightRadius={"10px"} w='10%'><SearchIcon color={"black"} /></Button>

@@ -10,7 +10,7 @@ const ProductCard = ({ _id, image, title, price, mrp, rating, review, category }
       <Image h={["100px","150px","180px","200px"]}  m={"auto"} alignSelf={"center"} src={image} alt="product image" />
       </Box>
       <Box  width={["60%","100%","100%","100%"]}>
-      <Text fontSize={"14px"} className='title'>
+      <Text fontWeight={"semibold"} fontSize={"14px"} className='title'>
         {title}
       </Text>
       <HStack>
@@ -19,7 +19,7 @@ const ProductCard = ({ _id, image, title, price, mrp, rating, review, category }
           value={rating}
           size={14}
           color2={'#ffd700'}
-          onChange={null}
+          
           isEdit={false}
           className="star"
 

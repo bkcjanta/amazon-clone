@@ -4,6 +4,9 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
+    position: static;
+    top: 0px;
+    z-index: 2;
     
     
 }
@@ -51,7 +54,8 @@
 
   .category-hover {
     border: 1px solid rgb(35,47,62);
-    padding: 5px;
+    font-size: 14px;
+    padding: 2px 5px;
 
   }
   .category-hover:hover{

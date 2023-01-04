@@ -11,10 +11,21 @@
     
 }
 .side-filter{
-    border: 1px solid red;
-    width: 100px;
-    height: 100vh;
+    width: 100px;   
+    height: 80vh; 
     position: fixed;
     left: 0px;
-    top: 0px;
+   
+   
+}
+.filter-text
+{
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+
+}
+.filter-text:hover
+{
+color: rgb(228, 134, 11);
 }
