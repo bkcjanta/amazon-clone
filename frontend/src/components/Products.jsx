@@ -3,6 +3,7 @@ import React from 'react'
 import ProductCard from './ProductCard'
 import { data } from "./data"
 import ReactStarsRating from 'react-awesome-stars-rating';
+import ReactPaginate from 'react-paginate';
 export const Products = () => {
 
     return (
@@ -84,7 +85,7 @@ export const Products = () => {
             <Box p={["1rem", "2rem", "2rem", "2rem"]} bg="rgb(248,248,248)" ml={["0px", "150px", "200px", "250px"]}>
                 <HStack p="5px" justifyContent={"space-between"} >
                     <Text>1-20 out of 288</Text>
-                    <Select size='xs'  w={"200px"} placeholder='sort by: default'>
+                    <Select size='xs' w={"200px"} placeholder='sort by: default'>
                         <option value='plh'>sort by: price: Low-to-High</option>
                         <option value='phl'>sort by: price: High-to-Low</option>
                         <option value='crhl'>Sort by: Avg. Customer Review</option>
@@ -98,6 +99,15 @@ export const Products = () => {
                         price={item.price} mrp={item.mrp} category={item.category}
                     />)}
                 </SimpleGrid>
+                <ReactPaginate
+                    breakLabel="..."
+                    nextLabel="next >"
+
+                    pageRangeDisplayed={1}
+                    pageCount={10}
+                    previousLabel="< previous"
+                    renderOnZeroPageCount={null}
+                />
             </Box>
         </Box>
     )
