@@ -2,14 +2,14 @@ const express = require("express")
 const cors = require("cors");
 require("dotenv").config()
 const { connect } = require("./Config/db")
-const {productRoute}=require("./Routes/product.route")
+const {productsRoute}=require("./Routes/product.route")
 const app = express()
 app.use(express.json())
 app.use(cors({
     origin: "*",
 }))
 
-app.use("/products",productRoute)
+app.use("/products",productsRoute)
 
 app.listen(process.env.PORT, async () => {
     try {
