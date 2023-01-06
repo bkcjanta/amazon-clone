@@ -1,17 +1,16 @@
 import { AllRoutes } from './AllRoutes/AllRoutes';
 import './App.css';
-import Navbar from './components/Navbar';
-import ProductCard from './components/ProductCard';
-import { Products } from './components/Products';
+import Navbar from './components/navbar/Navbar';
+import { Details } from './components/products/Details';
+
 
 
 function App() {
   return (
     <div className="App">
       <Navbar/>
-      {/* <ProductCard/> */}
-      {/* <Products/> */}
       <AllRoutes />
+      {/* <Details/> */}
     </div>
   );
 }

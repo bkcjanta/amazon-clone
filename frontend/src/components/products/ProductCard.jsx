@@ -3,16 +3,17 @@ import React from 'react'
 import ReactStars from "react-stars"
 import ReactStarsRating from 'react-awesome-stars-rating';
 import "./products.css"
-const ProductCard = ({ _id, image, title, price, mrp, rating, review, category }) => {
+import { Link } from 'react-router-dom';
+const ProductCard = ({ _id, image, title, price, mrp, rating, review, category,path }) => {
   return (
     <Stack  boxShadow={"inner"} p={["2px","6px","10px"]} direction={["row","column","column"]}  >
       <Box width={["40%","100%","100%","100%"]}  p="10px" bg={"white"}  >
+      <Link  to={`/products/${path}/details/${_id}`}>
       <Image h={["100px","150px","180px","200px"]}  m={"auto"} alignSelf={"center"} src={image} alt="product image" />
+      </Link>
       </Box>
       <Box  width={["60%","100%","100%","100%"]}>
-      <Text fontWeight={"semibold"} fontSize={"14px"} className='title'>
-        {title}
-      </Text>
+      <Link  to={`/products/${path}/details/${_id}}`}><Text fontWeight={"semibold"} fontSize={"14px"} className='title'>{title}</Text></Link>
       <HStack>
         <ReactStarsRating
           count={5}

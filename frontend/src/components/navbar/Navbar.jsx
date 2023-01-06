@@ -1,5 +1,5 @@
 import React from 'react'
-import logo from "../logo.jpg"
+import logo from "../../logo.jpg"
 import { Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, HStack, Heading, Image, Input, InputGroup, InputLeftElement, InputRightElement, Select, Stack, Text, useDisclosure } from "@chakra-ui/react"
 import { HamburgerIcon, SearchIcon } from "@chakra-ui/icons"
 import "./navbar.css"
