@@ -1,11 +1,12 @@
 import React from 'react'
 import logo from "../logo.jpg"
-import { Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, HStack, Heading, Image, Input, InputGroup, InputLeftElement, InputRightElement, Link, LinkBox, Select, Stack, Text, useDisclosure } from "@chakra-ui/react"
+import { Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, HStack, Heading, Image, Input, InputGroup, InputLeftElement, InputRightElement, Select, Stack, Text, useDisclosure } from "@chakra-ui/react"
 import { HamburgerIcon, SearchIcon } from "@chakra-ui/icons"
 import "./navbar.css"
 import { AiOutlineShoppingCart, AiOutlineUser } from "react-icons/ai"
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FaHome, FaUserCircle } from "react-icons/fa"
+import { Link } from 'react-router-dom'
 const Navbar = () => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const btnRef = React.useRef()
@@ -18,9 +19,9 @@ const Navbar = () => {
                 placement='left'
                 onClose={onClose}
                 finalFocusRef={btnRef}
-                
+
             >
-                <DrawerOverlay  />
+                <DrawerOverlay />
                 <DrawerContent >
                     <DrawerCloseButton color={"white"} />
                     <DrawerHeader color={"white"} bg={"rgb(35,47,62)"} p={"20px"}>
@@ -32,39 +33,39 @@ const Navbar = () => {
 
                     <DrawerBody>
                         <Stack spacing={1}>
-                            <Divider h={"4px"}/>
+                            <Divider h={"4px"} />
                             <HStack py={3} justifyContent={"space-between"}>
                                 <Heading fontSize={"lg"}>Amazon Home</Heading>
-                                <FaHome size={"30px"}/>
+                                <FaHome size={"30px"} />
                             </HStack>
-                            <Divider h={"4px"}/>
+                            <Divider h={"4px"} />
                             <Box>
                                 <Heading pt={3} fontSize={"lg"}>Categories</Heading>
-                                <Box className='category-side'><Text>Electronics</Text></Box>
-                                <Box className='category-side'><Text>Home & Kitchens</Text></Box>
-                                <Box className='category-side'><Text>Mobiles</Text></Box>
-                                <Box className='category-side'><Text>Men's Fashion</Text></Box>
-                                <Box className='category-side'><Text>Women's Fashion</Text></Box>
-                                <Box className='category-side'><Text>Kid's Fashion</Text></Box>
-                                <Box className='category-side'><Text>Beauty</Text></Box>
-                                <Box className='category-side'><Text>Health & Fitness</Text></Box>
-                                <Box className='category-side'><Text>Books</Text></Box>
+                                <Link to="/products/electronics"><Box className='category-side'><Text>Electronics</Text></Box></Link>
+                                <Link to="/products/home&kitchen"> <Box className='category-side'><Text>Home & Kitchens</Text></Box></Link>
+                                <Link to="/products/mobiles"><Box className='category-side'><Text>Mobiles</Text></Box></Link>
+                                <Link to="/products/mens"> <Box className='category-side'><Text>Men's Fashion</Text></Box></Link>
+                                <Link to="/products/womens"><Box className='category-side'><Text>Women's Fashion</Text></Box></Link>
+                                <Link to="/products/kids"><Box className='category-side'><Text>Kid's Fashion</Text></Box></Link>
+                                <Link to="/products/beauty"><Box className='category-side'><Text>Beauty</Text></Box></Link>
+                                <Link to="/products/health&fitness"><Box className='category-side'><Text>Health & Fitness</Text></Box></Link>
+                                <Link to="/products/books"><Box className='category-side'><Text>Books</Text></Box></Link>
                             </Box>
-                            <Divider h={"4px"}/>
+                            <Divider h={"4px"} />
                             <Box>
                                 <Heading fontSize={"lg"}>Trending</Heading>
                                 <Box className='category-side'><Text>Best Seller</Text></Box>
                                 <Box className='category-side'><Text>High Rating</Text></Box>
                                 <Box className='category-side'><Text>New Release</Text></Box>
                             </Box>
-                            <Divider h={"4px"}/>
+                            <Divider h={"4px"} />
                             <Box>
                                 <Heading fontSize={"lg"}>Setting</Heading>
                                 <Box className='category-side'><Text>Account</Text></Box>
                                 <Box className='category-side'><Text>High Rating</Text></Box>
                                 <Box className='category-side'><Text>Logout</Text></Box>
                             </Box>
-                            <Divider h={"4px"}/>
+                            <Divider h={"4px"} />
                         </Stack>
 
                     </DrawerBody>
@@ -94,7 +95,7 @@ const Navbar = () => {
                             <Box className='test1' w={["200px", "250px", "300px"]} h="300px" p={"1rem"} border="1px" color={"black"} cursor={"auto"} borderColor={"black"} pos="absolute" right={["10px", "30px", "40px"]} top={"20px"} bg={"white"}  >
                                 <Box textAlign={"center"} mb="10px">
                                     <Button bg={"yellow.400"} _hover={{ bg: "yellow.500" }} w={"100%"}>Sign in</Button>
-                                    <Text fontSize={"sm"}>New User ?<Link color={"blue"} to="/#"> Sign up</Link></Text>
+                                    <Text fontSize={"sm"}>New User ?<Link to="/#"> Sign up</Link></Text>
                                 </Box>
                                 <Stack spacing={1} justifyContent="flex-start" >
                                     <Divider />
@@ -134,15 +135,15 @@ const Navbar = () => {
                         <HamburgerIcon />
                         <Text>All</Text>
                     </HStack>
-                    <Box className='category-hover'><Text>Mobiles</Text></Box>
-                    <Box className='category-hover'><Text>Electronics</Text></Box>
-                    <Box className='category-hover'><Text>Home & Kitchens</Text></Box>
-                    <Box className='category-hover'><Text>Men's Fashion</Text></Box>
-                    <Box className='category-hover'><Text>Women's Fashion</Text></Box>
-                    <Box className='category-hover'><Text>Kid's Fashion</Text></Box>
-                    <Box className='category-hover'><Text>Beauty</Text></Box>
-                    <Box className='category-hover'><Text>Health & fitness</Text></Box>
-                    <Box className='category-hover'><Text>Books</Text></Box>
+                    <Link to="/products/electronics"><Box className='category-hover'><Text>Electronics</Text></Box></Link>
+                    <Link to="/products/home&kitchen"> <Box className='category-hover'><Text>Home & Kitchens</Text></Box></Link>
+                    <Link to="/products/mobiles"><Box className='category-hover'><Text>Mobiles</Text></Box></Link>
+                    <Link to="/products/mens"> <Box className='category-hover'><Text>Men's Fashion</Text></Box></Link>
+                    <Link to="/products/womens"><Box className='category-hover'><Text>Women's Fashion</Text></Box></Link>
+                    <Link to="/products/kids"><Box className='category-hover'><Text>Kid's Fashion</Text></Box></Link>
+                    <Link to="/products/beauty"><Box className='category-hover'><Text>Beauty</Text></Box></Link>
+                    <Link to="/products/health&fitness"><Box className='category-hover'><Text>Health & Fitness</Text></Box></Link>
+                    <Link to="/products/books"><Box className='category-hover'><Text>Books</Text></Box></Link>
                 </HStack>
             </Box>
         </Box >

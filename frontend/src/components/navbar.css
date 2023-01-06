@@ -70,3 +70,6 @@
     background-color: antiquewhite;
     cursor: pointer;
   }
+  .category{
+      scroll-padding-top: 20px
+  }

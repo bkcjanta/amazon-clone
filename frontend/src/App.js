@@ -1,3 +1,4 @@
+import { AllRoutes } from './AllRoutes/AllRoutes';
 import './App.css';
 import Navbar from './components/Navbar';
 import ProductCard from './components/ProductCard';
@@ -9,7 +10,8 @@ function App() {
     <div className="App">
       <Navbar/>
       {/* <ProductCard/> */}
-      <Products/>
+      {/* <Products/> */}
+      <AllRoutes />
     </div>
   );
 }

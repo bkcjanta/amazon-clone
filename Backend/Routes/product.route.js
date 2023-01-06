@@ -6,6 +6,7 @@ productsRoute.get("/:path",async (req,res)=>{
     console.log(req.params.path);
     const pathname=req.params.path
     const param=req.query
+    console.log(req.query)
     const page=+(req.query.page)||1;
     const limit=10;
     const skip=(page-1)*limit
@@ -36,6 +37,7 @@ productsRoute.get("/:path",async (req,res)=>{
             })
         }
     }
+    console.log(sort_by)
    
     try {   
             const products= await productsModel.find({$and:arr}).sort(sort_by)
