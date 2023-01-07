@@ -26,7 +26,7 @@ export const Products = ({ path }) => {
     const [page, setPage] = useState(initialPage)
     const [isLoading, setIsLoading] = useState(false)
     const [sideloading, setSideloading] = useState(true)
-    const [total,setTotal]=useState("")
+    const [total, setTotal] = useState("")
 
 
     useEffect(() => {
@@ -37,7 +37,7 @@ export const Products = ({ path }) => {
                 console.log(res)
                 setData(res.data.data)
                 setTotal(res.data.total)
-                
+
             })
             .catch((err) => {
                 console.log(err)
@@ -45,13 +45,13 @@ export const Products = ({ path }) => {
 
     }, [rating, discount, price, sortBy, page, path])
 
-
+   
     useEffect(() => {
         if (rating == null && discount == null && price == null && sortBy == null) {
             setSearchParams({ page })
-        } else if (rating == null && discount != null && price == null && sortBy != null) {
+        } else if (rating == null && discount == null && price == null && sortBy != null) {
 
-            setSearchParams({ discount, page })
+            setSearchParams({ sortBy, page })
         } else if (rating == null && discount == null && price != null && sortBy == null) {
 
             setSearchParams({ price, page })
@@ -96,8 +96,8 @@ export const Products = ({ path }) => {
         }
     }, [rating, discount, price, sortBy, page, path])
 
-const p="<<"
-const n=">>"
+    const p = "<<"
+    const n = ">>"
     const reset = () => {
         setSideloading(false)
         setDiscount(null)
@@ -105,14 +105,15 @@ const n=">>"
         setRating(null)
         setSortby(null)
         setPage(1)
-        setTimeout(()=>{
+        setTimeout(() => {
             setSideloading(true)
-        },100)
-        
+        }, 100)
+
     }
     return (
         <Box>
             {
+                // filter part
                 sideloading ?
                     <Stack p={"1rem"} className='side-filter' w={["0px", "150px", "200px", "250px"]} display={['none', "flex", 'flex']} >
                         <Box overflowY={"scroll"}>
@@ -217,6 +218,7 @@ const n=">>"
                     : <></>
             }
             <Box p={["1rem", "2rem", "2rem", "2rem"]} bg="rgb(248,248,248)" ml={["0px", "150px", "200px", "250px"]}>
+                {/* soriting */}
                 <HStack p="5px" justifyContent={"end"} >
                     <Select size='xs' w={"200px"} onChange={(e) => setSortby(e.target.value)}>
                         <option value='null'>sort by: default</option>
@@ -224,10 +226,12 @@ const n=">>"
                         <option value='desc'>sort by: price: High-to-Low</option>
                     </Select>
                 </HStack>
+                <Text>{(data.length *(page-1)+1)}-{data.length *page} out of {total}</Text>
                 {!isLoading ?
                     <>
                         {data.length ?
                             <>
+                                {/* card */}
                                 <SimpleGrid columns={[1, 2, 3, 4, 5]} spacing={[1, 2, 4, 5]} >
                                     {data?.map((item, i) => <ProductCard key={i}
                                         image={item.image} title={item.title}
@@ -237,12 +241,13 @@ const n=">>"
                                         _id={item._id}
                                     />)}
                                 </SimpleGrid>
+                                {/* pagination */}
                                 <HStack spacing={2} justifyContent="end">
-                               <Button disabled={page<=1} onClick={()=>setPage(pre=>pre-1)}>{ p} </Button>
-                               <Text>{page} out of {Math.ceil(total/20)}</Text>
-                                <Button disabled={page>=Math.ceil(total/20)} onClick={()=>setPage(pre=>pre+1)}>{n}</Button>
-                               </HStack>
-                              
+                                    <Button disabled={page <= 1} onClick={() => setPage(pre => pre - 1)}>{p} </Button>
+                                    <Text>{page} out of {Math.ceil(total / 20)}</Text>
+                                    <Button disabled={page >= Math.ceil(total / 20)} onClick={() => setPage(pre => pre + 1)}>{n}</Button>
+                                </HStack>
+
                             </>
                             : <Text color={"yellow.500"}> no data found</Text>
                         }

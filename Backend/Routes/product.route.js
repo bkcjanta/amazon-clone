@@ -42,7 +42,6 @@ productsRoute.get("/:path", async (req, res) => {
     try {
         const products = await productsModel.find({ $and: arr }).sort(sort_by).skip(skip).limit(limit);
         const total=await productsModel.countDocuments({ $and: arr })
-        toata=Math.ceil(total/20)
         res.send({data:products,total:total,limit:20})
         res.end()
     } catch (error) {
