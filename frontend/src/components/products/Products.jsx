@@ -25,6 +25,7 @@ export const Products = ({ path }) => {
     const [sortBy, setSortby] = useState(initialSortby)
     const [page, setPage] = useState(initialPage)
     const [isLoading, setIsLoading] = useState(false)
+    const [isErr, setIsErr] = useState(false)
     const [sideloading, setSideloading] = useState(true)
     const [total, setTotal] = useState("")
 
@@ -34,18 +35,28 @@ export const Products = ({ path }) => {
         axios.get(`http://localhost:8080/products/${path}?rating=${rating}&&price=${price}&&discount=${discount}&&sortBy=${sortBy}&&page=${page}`)
             .then((res) => {
                 setIsLoading(false)
-                console.log(res)
-                setData(res.data.data)
-                setTotal(res.data.total)
+                if (res.data.isErr) {
+                    setIsErr(true)
+                    setData([])
+                    setTotal(0)
+                } else {
+                    setIsErr(false)
+                    console.log(res)
+                    setData(res.data.data)
+                    setTotal(res.data.total)
+                }
 
             })
             .catch((err) => {
                 console.log(err)
+                setIsErr(true)
+                setData([])
+                setTotal(0)
             })
 
     }, [rating, discount, price, sortBy, page, path])
 
-   
+
     useEffect(() => {
         if (rating == null && discount == null && price == null && sortBy == null) {
             setSearchParams({ page })
@@ -219,40 +230,45 @@ export const Products = ({ path }) => {
             }
             <Box p={["1rem", "2rem", "2rem", "2rem"]} bg="rgb(248,248,248)" ml={["0px", "150px", "200px", "250px"]}>
                 {/* soriting */}
-                <HStack p="5px" justifyContent={"end"} >
-                    <Select size='xs' w={"200px"} onChange={(e) => setSortby(e.target.value)}>
-                        <option value='null'>sort by: default</option>
-                        <option value='asc'>sort by: price: Low-to-High</option>
-                        <option value='desc'>sort by: price: High-to-Low</option>
-                    </Select>
-                </HStack>
-                <Text>{(data.length *(page-1)+1)}-{data.length *page} out of {total}</Text>
-                {!isLoading ?
+                {!isErr ?
                     <>
-                        {data.length ?
+                        <HStack p="5px" justifyContent={"end"} >
+                            <Select size='xs' w={"200px"} onChange={(e) => setSortby(e.target.value)}>
+                                <option value='null'>sort by: default</option>
+                                <option value='asc'>sort by: price: Low-to-High</option>
+                                <option value='desc'>sort by: price: High-to-Low</option>
+                            </Select>
+                        </HStack>
+                        {data.length ? (data.length < 50 ? <Text>{(page - 1) * 50 + 1}-{total} out of {total}</Text> : <Text>{(data.length * (page - 1) + 1)}-{data.length * page} out of {total}</Text>) : <Text>0-0 out of 0</Text>}
+                        {!isLoading ?
                             <>
-                                {/* card */}
-                                <SimpleGrid columns={[1, 2, 3, 4, 5]} spacing={[1, 2, 4, 5]} >
-                                    {data?.map((item, i) => <ProductCard key={i}
-                                        image={item.image} title={item.title}
-                                        rating={item.rating} review={item.review}
-                                        price={item.price} mrp={item.mrp} category={item.category}
-                                        path={path}
-                                        _id={item._id}
-                                    />)}
-                                </SimpleGrid>
-                                {/* pagination */}
-                                <HStack spacing={2} justifyContent="end">
-                                    <Button disabled={page <= 1} onClick={() => setPage(pre => pre - 1)}>{p} </Button>
-                                    <Text>{page} out of {Math.ceil(total / 20)}</Text>
-                                    <Button disabled={page >= Math.ceil(total / 20)} onClick={() => setPage(pre => pre + 1)}>{n}</Button>
-                                </HStack>
+                                {data.length ?
+                                    <>
+                                        {/* card */}
+                                        <SimpleGrid columns={[1, 2, 3, 4, 5]} spacing={[1, 2, 4, 5]} >
+                                            {data?.map((item, i) => <ProductCard key={i}
+                                                image={item.image} title={item.title}
+                                                rating={item.rating} review={item.review}
+                                                price={item.price} mrp={item.mrp} category={item.category}
+                                                path={path}
+                                                _id={item._id}
+                                            />)}
+                                        </SimpleGrid>
+                                        {/* pagination */}
+                                        <HStack spacing={2} justifyContent="end">
+                                            <Button disabled={page <= 1} onClick={() => setPage(pre => pre - 1)}>{p} </Button>
+                                            <Text>{page} out of {Math.ceil(total / 50)}</Text>
+                                            <Button disabled={page >= Math.ceil(total / 50)} onClick={() => setPage(pre => pre + 1)}>{n}</Button>
+                                        </HStack>
 
+                                    </>
+                                    : <Text color={"yellow.500"}> no data found</Text>
+                                }
                             </>
-                            : <Text color={"yellow.500"}> no data found</Text>
+                            : <Text color={"green.500"}> Loading...</Text>
                         }
                     </>
-                    : <Text color={"green.500"}> Loading...</Text>
+                    : <Text>Try checking your spelling or use more general terms</Text>
                 }
             </Box>
         </Box>
