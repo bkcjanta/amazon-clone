@@ -1,38 +1,42 @@
-.star{
+.star {
     display: flex;
     flex-direction: row;
 }
-.title{
+
+.title {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    
+
 }
-.side-filter{
-    width: 100px;   
-    height: 80vh; 
+
+.side-filter {
+    width: 100px;
+    height: 80vh;
     position: fixed;
     left: 0px;
-   
-   
+
+
 }
-.filter-text
-{
+
+.filter-text {
     font-size: 14px;
     font-weight: 400;
     cursor: pointer;
 
 }
-.filter-text:hover
-{
-color: rgb(228, 134, 11);
+
+.filter-text:hover {
+    color: rgb(228, 134, 11);
 }
-#radio{
+
+#radio {
     background-color: red;
 }
-#Img:hover{
+
+#Img:hover {
     z-index: 3;
     transform: scale(1.5);
     box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;

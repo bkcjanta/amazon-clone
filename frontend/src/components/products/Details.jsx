@@ -7,18 +7,23 @@ import "./products.css"
 import { HiLockClosed, HiOutlineLocationMarker } from "react-icons/hi"
 import { CiPercent } from "react-icons/ci"
 import ProductCard from './ProductCard';
-import {IoIosArrowForward} from "react-icons/io"
+import { IoIosArrowForward } from "react-icons/io"
+import useAxios from '../../useAxios';
+import Carousel from 'better-react-carousel'
+import Footer from '../Footer/Footer';
+
 export const Details = () => {
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     let date = new Date();
     date.setDate(date.getDate() + 4)
-
     const offers = [
         { tag: "Bank Offer", des: "Upto ₹1,000.00 discount on SBI Credit Cards", no: 3 },
         { tag: "No Cost EMI", des: "Avail No Cost EMI on select cards for orders above ₹3000", no: 1 },
         { tag: "Partner Offers", des: "Get GST invoice and save up to 28% on business purchases.", no: 1 }
     ]
+
+    const api = useAxios();
 
     let location = useLocation()
     const path = location.pathname.split("/")[2]
@@ -30,13 +35,13 @@ export const Details = () => {
     useEffect(() => {
         setPage(0)
         setIsLoading(true)
-        axios.get(`http://localhost:8080/products/${path}/details/${_id}`)
+        api.get(`/products/${path}/details/${_id}`)
             .then((res) => {
                 console.log(res.data)
                 setData(res.data)
                 setIsLoading(false)
             })
-        axios.get(`http://localhost:8080/products/${path}`)
+        api.get(`/products/${path}`)
             .then((res) => {
                 setRelated_data(res.data.data)
             })
@@ -45,22 +50,33 @@ export const Details = () => {
             })
 
     }, [_id]);
-    console.log(related_data)
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [])
+
+
+    const backToTop = () => {
+        window.scrollTo(0, 10);
+
+    }
+
     return (
-        <>
+        <Box>
             {
                 !isLoading ?
 
-                    <Stack>
-                       <Box w={"100%"} boxShadow={"2xl"}> <Image  m={"auto"} src='https://m.media-amazon.com/images/I/21neM1UGaYL.jpg' /></Box>
+                    <Stack >
+                        <Box w={"100%"} boxShadow={"2xl"}> <Image m={"auto"} src='https://m.media-amazon.com/images/I/21neM1UGaYL.jpg' />
+                        </Box>
                         <HStack mt={"1rem"} p={"1rem"} spacing={1} justifyContent="space-between" >
 
                             <HStack alignSelf="flex-start" p={"1rem"} spacing={20} h={"500px"} w={"50%"} >
-                                <Box boxShadow={"2xl"}  p={"1rem"} border="2px" borderColor={"yellow.500"} alignSelf={"flex-start"} w={"16%"} h={"100px"} >
+                                <Box boxShadow={"2xl"} p={"1rem"} border="2px" borderColor={"yellow.500"} alignSelf={"flex-start"} w={"16%"} h={"100px"} >
                                     <Image m={"auto"} objectFit={"cover"} h={"60px"} src={data.image}></Image>
                                 </Box>
-                                <Box w={"50%"} p={"1rem"}  id="Img"   mt={"-5rem"} boxShadow={"2xl"} >
-                                    <Image   m={"auto"} src={data.image}></Image>
+                                <Box w={"50%"} p={"1rem"} id="Img" mt={"-5rem"} boxShadow={"2xl"} >
+                                    <Image m={"auto"} src={data.image}></Image>
                                 </Box>
                             </HStack>
                             <Stack direction={"row"} alignSelf={"flex-start"} w={"50%"}>
@@ -94,10 +110,10 @@ export const Details = () => {
                                         </HStack>
                                         <SimpleGrid direction={"row"} columns={3} spacing={2} >
                                             {offers.map((e, i) =>
-                                                <Stack fontSize={"12px"} boxShadow={"lg"} p={"5px"} _hover={{boxShadow:"2xl"}} transition={"ease-in"}  >
+                                                <Stack fontSize={"12px"} boxShadow={"lg"} p={"5px"} _hover={{ boxShadow: "2xl" }} transition={"ease-in"}  >
                                                     <Text fontWeight={"bold"} fontSize={"12px"}>{e.tag}</Text>
                                                     <Text>{e.des}</Text>
-                                                    <Text _hover={{"cursor":"pointer"}} color={"green"}  >  {e.no} Offers</Text>
+                                                    <Text _hover={{ "cursor": "pointer" }} color={"green"}  >  {e.no} Offers</Text>
                                                 </Stack>
                                             )}
                                         </SimpleGrid>
@@ -137,39 +153,39 @@ export const Details = () => {
                                 </Stack>
                             </Stack>
                         </HStack>
-                        <Divider  h={"10px"}/>
-                        <Stack h={"200px"} px={"4rem"}>
+                        <Divider h={"10px"} />
+                        <Stack h={"200px"} px={"4rem"} mb={"400px"}>
                             <Heading textAlign={"left"}>Products related to this item</Heading>
-                            <SimpleGrid direction={"row"} columns={6} spacing={5}>
-                               {page<1?null: <Button position={"absolute"} zIndex={3} left={0} alignSelf={"center"} w={"20px"} onClick={()=>setPage(prev=>prev-6)} fontSize={"30px"}>{"<"}</Button>}
+                            <Carousel cols={4} rows={1} gap={10}  >
                                 {
-                                    related_data?.map((item, i) =>   {
-                                          if(i<page+6 && i>=page){
-                                            return(
+                                    related_data?.map((item, i) => {
+
+                                        return (
+
+                                            <Carousel.Item>
                                                 <ProductCard key={i}
-                                            image={item.image} title={item.title}
-                                            rating={item.rating} review={item.review}
-                                            price={item.price} mrp={item.mrp} category={item.category}
-                                            path={path}
-                                            _id={item._id}
-                                        />
-                                            )
-                                          }
+                                                    image={item.image} title={item.title}
+                                                    rating={item.rating} review={item.review}
+                                                    price={item.price} mrp={item.mrp} category={item.category}
+                                                    path={path}
+                                                    _id={item._id}
+                                                />
+                                            </Carousel.Item>
+                                        )
+
                                     })
 
                                 }
-                               {
-                                page>Math.ceil(related_data.length)-6?null: <Button fontSize={"30px"} position={"absolute"} zIndex={3} right={0} alignSelf={"center"} w={"20px"} onClick={()=>setPage(prev=>prev+6)}>{">"}</Button>
-                               }
-                            </SimpleGrid>
-
+                            </Carousel>
                         </Stack>
-
+                        {/* <Footer backToTop={backToTop} /> */}
                     </Stack>
 
                     :
                     <Text color={"green.400"}>Loading...</Text>
             }
-        </>
+
+
+        </Box>
     )
 }

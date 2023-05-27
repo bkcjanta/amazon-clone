@@ -1,120 +1,96 @@
 import { Box, Button, HStack, Heading, Menu, Radio, RadioGroup, Select, SimpleGrid, Stack, Text } from '@chakra-ui/react'
 import React, { useState, useEffect } from 'react'
 import ProductCard from './ProductCard'
-// import { data } from "./data"
 import ReactStarsRating from 'react-awesome-stars-rating';
-import ReactPaginate from 'react-paginate';
-import { useSearchParams } from "react-router-dom";
-import axios from "axios"
-export const Products = ({ path }) => {
-    console.log(path);
+import { useLocation, useSearchParams } from "react-router-dom";
+import axios from 'axios';
+import Loading from '../Loading';
+import useAxios from '../../useAxios';
+import { useDispatch, useSelector } from 'react-redux';
+import { productFailure, productRequest, productSuccess } from '../../reducers/productSlice';
+import Cookies from 'js-cookie';
+export const Products = () => {
+    const api = useAxios()
+    const location = useLocation()
+    const path = location.pathname.split("/")[2]
     const [searchParams, setSearchParams] = useSearchParams();
-    let initialRating = searchParams.get("rating")
-    let initialDiscount = searchParams.get("discount")
-    let initialPrice = searchParams.get("price")
-    let initialSortby = searchParams.get("sortBy")
-    let initialPage = +(searchParams.get("page"))
-    const [data, setData] = useState([])
-    if (initialPage == "null" || initialPage <= 0 || isNaN(initialPage)) {
-        initialPage = 1
-    }
-
-    const [rating, setRating] = useState(initialRating)
-    const [discount, setDiscount] = useState(initialDiscount)
-    const [price, setPrice] = useState(initialPrice)
-    const [sortBy, setSortby] = useState(initialSortby)
-    const [page, setPage] = useState(initialPage)
+    let initialPage = +(searchParams.get("page")) || 1;
+    const [pathname, setPathname] = useState(path);
+    const [sk, setSk] = useState(Cookies.get("sk") || "");
+    const [search, setSearch] = useState(location.search)
+    const [rating, setRating] = useState(searchParams.get("rating"))
+    const [discount, setDiscount] = useState(searchParams.get("dscount"))
+    const [price, setPrice] = useState(searchParams.get("price"))
+    const [sortBy, setSortby] = useState(searchParams.get("sortBy"))
+    const [page, setPage] = useState(initialPage || 1)
     const [isLoading, setIsLoading] = useState(false)
     const [isErr, setIsErr] = useState(false)
     const [sideloading, setSideloading] = useState(true)
     const [total, setTotal] = useState("")
+    console.log(sk)
+    console.log()
+
+    const dispatch = useDispatch()
+    const { products, loading } = useSelector(state => state.products)
 
 
     useEffect(() => {
-        setIsLoading(true)
-        axios.get(`http://localhost:8080/products/${path}?rating=${rating}&&price=${price}&&discount=${discount}&&sortBy=${sortBy}&&page=${page}`)
-            .then((res) => {
-                setIsLoading(false)
-                if (res.data.isErr) {
-                    setIsErr(true)
-                    setData([])
-                    setTotal(0)
-                } else {
-                    setIsErr(false)
-                    console.log(res)
-                    setData(res.data.data)
-                    setTotal(res.data.total)
-                }
+        setPrice("");
+        setDiscount("");
+        setRating("");
+        setSortby("");
+        setPage(page);
+        setSk(searchParams.get("sk"));
 
+    }, [pathname, path])
+
+    useEffect(() => {
+        let param = {};
+        price && (param.price = price);
+        rating && (param.rating = rating);
+        discount && (param.discount = discount);
+        sortBy && (param.sortBy = sortBy);
+        page && (param.page = page);
+        (Cookies.get("sk") || searchParams.get("sk")) && (param.sk = Cookies.get("sk") || searchParams.get("sk"));
+        setSearchParams(param)
+        setSearch(location.search)
+
+    }, [rating, discount, price, sortBy, page, pathname, path, location.search, searchParams, setSearchParams])
+
+    useEffect(() => {
+        dispatch(productRequest())
+
+        api.get(`/products/${path}${location.search}`)
+            .then((res) => {
+                setTotal(res.data.total)
+                dispatch(productSuccess(res.data.data))
             })
             .catch((err) => {
-                console.log(err)
-                setIsErr(true)
-                setData([])
+                // console.log(err)
+                dispatch(productFailure())
                 setTotal(0)
+                setIsErr(true)
             })
 
-    }, [rating, discount, price, sortBy, page, path])
 
+
+    }, [search, path, location.search, dispatch, api])
 
     useEffect(() => {
-        if (rating == null && discount == null && price == null && sortBy == null) {
-            setSearchParams({ page })
-        } else if (rating == null && discount == null && price == null && sortBy != null) {
-
-            setSearchParams({ sortBy, page })
-        } else if (rating == null && discount == null && price != null && sortBy == null) {
-
-            setSearchParams({ price, page })
-        } else if (rating == null && discount == null && price != null && sortBy != null) {
-
-            setSearchParams({ price, sortBy, page })
-        } else if (rating == null && discount != null && price == null && sortBy == null) {
-
-            setSearchParams({ discount, page })
-        } else if (rating == null && discount != null && price == null && sortBy != null) {
-
-            setSearchParams({ discount, sortBy, page })
-        } else if (rating == null && discount != null && price != null && sortBy == null) {
-
-            setSearchParams({ discount, price, page })
-        } else if (rating == null && discount != null && price != null && sortBy != null) {
-
-            setSearchParams({ discount, price, sortBy, page })
-        } else if (rating != null && discount == null && price == null && sortBy == null) {
-
-            setSearchParams({ rating, page })
-        } else if (rating != null && discount == null && price == null && sortBy != null) {
-
-            setSearchParams({ rating, sortBy, page })
-        } else if (rating != null && discount == null && price != null && sortBy == null) {
-
-            setSearchParams({ rating, price, page })
-        } else if (rating != null && discount == null && price != null && sortBy != null) {
-
-            setSearchParams({ rating, price, sortBy, page })
-        } else if (rating != null && discount != null && price == null && sortBy == null) {
-
-            setSearchParams({ rating, discount, page })
-        } else if (rating != null && discount != null && price == null && sortBy != null) {
-
-            setSearchParams({ rating, discount, sortBy, page })
-        } else if (rating != null && discount != null && price != null && sortBy == null) {
-
-            setSearchParams({ rating, discount, price, page })
-        } else if (rating != null && discount != null && price != null && sortBy != null) {
-            setSearchParams({ rating, discount, price, sortBy, page })
-        }
-    }, [rating, discount, price, sortBy, page, path])
+        setSideloading(false)
+        setTimeout(() => {
+            setSideloading(true)
+        }, 100)
+    }, [path])
 
     const p = "<<"
     const n = ">>"
     const reset = () => {
         setSideloading(false)
-        setDiscount(null)
-        setPrice(null);
-        setRating(null)
-        setSortby(null)
+        setDiscount("")
+        setPrice("");
+        setRating("")
+        setSortby("")
         setPage(1)
         setTimeout(() => {
             setSideloading(true)
@@ -122,7 +98,7 @@ export const Products = ({ path }) => {
 
     }
     return (
-        <Box>
+        <Box zIndex={0} >
             {
                 // filter part
                 sideloading ?
@@ -131,7 +107,10 @@ export const Products = ({ path }) => {
                             <Stack>
                                 <Button onClick={reset}>reset</Button>
                                 <Heading fontSize={16} my="5px" > Price</Heading>
-                                <RadioGroup onChange={(e) => setPrice(e)} >
+                                <RadioGroup value={price} onChange={(e) => {
+                                    setPrice(e);
+                                    setPage(1);
+                                }} >
                                     <Stack direction='column'>
                                         <Radio size='sm' value='0-1000'><Text className="filter-text" >Under ₹1,000</Text></Radio>
                                         <Radio size='sm' value='1000-5000'><Text className="filter-text" > ₹1,000 - ₹5,000</Text></Radio>
@@ -143,7 +122,11 @@ export const Products = ({ path }) => {
                             </Stack>
                             <Stack>
                                 <Heading fontSize={16} my="5px" >Discount</Heading>
-                                <RadioGroup onChange={(e) => setDiscount(e)} >
+                                <RadioGroup value={discount} onChange={(e) => {
+
+                                    setDiscount(e);
+                                    setPage(1);
+                                }}>
                                     <Stack direction='column'>
                                         <Radio size='sm' value='10'><Text className="filter-text" >10% Off or more</Text></Radio>
                                         <Radio size='sm' value='20'><Text className="filter-text" >20% Off or more</Text></Radio>
@@ -156,7 +139,10 @@ export const Products = ({ path }) => {
                             </Stack>
                             <Stack>
                                 <Heading fontSize={16} my="5px" >Ratings</Heading>
-                                <RadioGroup onChange={(e) => setRating(e)} >
+                                <RadioGroup value={rating} onChange={(e) => {
+                                    setPage(1);
+                                    setRating(e)
+                                }} >
                                     <Stack direction='column'>
                                         <Radio size='sm' value='4'>
                                             <Box className="filter-text" >
@@ -228,7 +214,7 @@ export const Products = ({ path }) => {
                     </Stack>
                     : <></>
             }
-            <Box p={["1rem", "2rem", "2rem", "2rem"]} bg="rgb(248,248,248)" ml={["0px", "150px", "200px", "250px"]}>
+            <Box id="right-section" overflowY={"scroll"} p={["1rem", "2rem", "2rem", "2rem"]} bg="rgb(248,248,248)" ml={["0px", "150px", "200px", "250px"]} h={"85vh"} >
                 {/* soriting */}
                 {!isErr ?
                     <>
@@ -239,14 +225,14 @@ export const Products = ({ path }) => {
                                 <option value='desc'>sort by: price: High-to-Low</option>
                             </Select>
                         </HStack>
-                        {data.length ? (data.length < 50 ? <Text>{(page - 1) * 50 + 1}-{total} out of {total}</Text> : <Text>{(data.length * (page - 1) + 1)}-{data.length * page} out of {total}</Text>) : <Text>0-0 out of 0</Text>}
-                        {!isLoading ?
+                        {products.length ? (products.length < 50 ? <Text>{(page - 1) * 50 + 1}-{total} out of {total}</Text> : <Text>{(products.length * (page - 1) + 1)}-{products.length * page} out of {total}</Text>) : <Text>0-0 out of 0</Text>}
+                        {!loading ?
                             <>
-                                {data.length ?
+                                {products.length ?
                                     <>
                                         {/* card */}
                                         <SimpleGrid columns={[1, 2, 3, 4, 5]} spacing={[1, 2, 4, 5]} >
-                                            {data?.map((item, i) => <ProductCard key={i}
+                                            {products?.map((item, i) => <ProductCard key={i}
                                                 image={item.image} title={item.title}
                                                 rating={item.rating} review={item.review}
                                                 price={item.price} mrp={item.mrp} category={item.category}
@@ -265,7 +251,7 @@ export const Products = ({ path }) => {
                                     : <Text color={"yellow.500"}> no data found</Text>
                                 }
                             </>
-                            : <Text color={"green.500"}> Loading...</Text>
+                            : <Loading />
                         }
                     </>
                     : <Text>Try checking your spelling or use more general terms</Text>

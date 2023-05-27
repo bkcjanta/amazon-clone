@@ -5,17 +5,23 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ChakraProvider } from '@chakra-ui/react'
 import { BrowserRouter } from 'react-router-dom';
-
+import { Provider } from 'react-redux'
+import { CookiesProvider } from 'react-cookie';
+import store from './store'
+// console.log(store)
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <ChakraProvider>
-    <BrowserRouter>
-    <App />
-    </BrowserRouter>
-    
-    </ChakraProvider>
-   
+    <CookiesProvider>
+      <Provider store={store}>
+        <ChakraProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+
+        </ChakraProvider>
+      </Provider>
+    </CookiesProvider>
   </React.StrictMode>
 );
 

@@ -1,75 +1,85 @@
-#navbar{
-    background-color: black;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    position: static;
-    top: 0px;
-    z-index: 2;
-    
-    
+#navbar {
+  background-color: black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: static;
+  top: 0px;
+  z-index: 20;
+
+
 }
 
-.input-group{
-    display: flex;
-    background-color: black;
-    border-radius: 20px;
-  
+.input-group {
+  display: flex;
+  /* background-color: black; */
+  border-radius: 20px;
+
 }
 
-.account-hover{
-    cursor: pointer;
-    padding: 5px 10px;
-    text-align: left;
+.account-hover {
+  cursor: pointer;
+  padding: 5px 10px;
+  text-align: left;
 
-  }
-.account-hover:hover{
-    background-color: antiquewhite;
-  }
-.nav-account:hover{
-    border-color: aliceblue
-  }
-.nav-account:hover >.overlay{
-    display: block;
-  }
-.test2{
-    position: fixed;
-    display: none;
-    width: 100%;
-    height: 100%;
-    top: 55px;
-    right:0px;
-    background-color: rgba(0,0,0,0.5);
-    z-index: 1;
-    cursor: pointer;
-  }
-.test1:hover ~ .test2{
-    display: block;
-    
-  }
-  .test2:hover{
-    display: block;
-  }
+}
 
-  .category-hover {
-    border: 1px solid rgb(35,47,62);
-    font-size: 14px;
-    padding: 2px 5px;
+.account-hover:hover {
+  background-color: antiquewhite;
+}
 
-  }
-  .category-hover:hover{
-    border: 1px solid rgb(250, 251, 251);
-    cursor: pointer;
+.nav-account:hover {
+  border-color: aliceblue
+}
 
-  }
-  .category-side{
-    padding: 5px;
-  }
-   .category-side:hover{
-    background-color: antiquewhite;
-    cursor: pointer;
-  }
-  .category{
-      scroll-padding-top: 20px
-  }
+.nav-account:hover>.overlay {
+  display: block;
+}
+
+.overlay {
+  position: fixed;
+  display: none;
+  width: 100%;
+  height: 100%;
+  top: 55px;
+  right: 0px;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  cursor: pointer;
+}
+
+.test1:hover~.overlay {
+  display: block;
+
+}
+
+.overlay:hover {
+  display: block;
+}
+
+.category-hover {
+  border: 1px solid rgb(35, 47, 62);
+  font-size: 14px;
+  padding: 2px 5px;
+
+}
+
+.category-hover:hover {
+  border: 1px solid rgb(250, 251, 251);
+  cursor: pointer;
+
+}
+
+.category-side {
+  padding: 5px;
+}
+
+.category-side:hover {
+  background-color: antiquewhite;
+  cursor: pointer;
+}
+
+.category {
+  scroll-padding-top: 20px
+}

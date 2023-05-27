@@ -7,4 +7,4 @@ const connect = () => {
     return mongoose.connect(process.env.mongoDB_URL)
 }
 
-module.exports = {connect}
+module.exports = { connect }
