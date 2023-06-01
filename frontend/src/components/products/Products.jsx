@@ -2,47 +2,41 @@ import { Box, Button, HStack, Heading, Menu, Radio, RadioGroup, Select, SimpleGr
 import React, { useState, useEffect } from 'react'
 import ProductCard from './ProductCard'
 import ReactStarsRating from 'react-awesome-stars-rating';
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import axios from 'axios';
 import Loading from '../Loading';
-import useAxios from '../../useAxios';
+
 import { useDispatch, useSelector } from 'react-redux';
 import { productFailure, productRequest, productSuccess } from '../../reducers/productSlice';
 import Cookies from 'js-cookie';
+import { api } from '../../AxiosConfig';
 export const Products = () => {
-    const api = useAxios()
-    const location = useLocation()
-    const path = location.pathname.split("/")[2]
+
+    const location = useLocation();
+    const path = location.pathname.split("/")[2];
     const [searchParams, setSearchParams] = useSearchParams();
     let initialPage = +(searchParams.get("page")) || 1;
-    const [pathname, setPathname] = useState(path);
-    const [sk, setSk] = useState(Cookies.get("sk") || "");
-    const [search, setSearch] = useState(location.search)
-    const [rating, setRating] = useState(searchParams.get("rating"))
-    const [discount, setDiscount] = useState(searchParams.get("dscount"))
-    const [price, setPrice] = useState(searchParams.get("price"))
-    const [sortBy, setSortby] = useState(searchParams.get("sortBy"))
-    const [page, setPage] = useState(initialPage || 1)
-    const [isLoading, setIsLoading] = useState(false)
-    const [isErr, setIsErr] = useState(false)
-    const [sideloading, setSideloading] = useState(true)
-    const [total, setTotal] = useState("")
-    console.log(sk)
-    console.log()
+    const [rating, setRating] = useState(searchParams.get("rating"));
+    const [discount, setDiscount] = useState(searchParams.get("dscount"));
+    const [price, setPrice] = useState(searchParams.get("price"));
+    const [sortBy, setSortby] = useState(searchParams.get("sortBy"));
+    const [page, setPage] = useState(initialPage || 1);
+    const [isErr, setIsErr] = useState(false);
+    const [sideloading, setSideloading] = useState(true);
+    const [total, setTotal] = useState("");
+    const dispatch = useDispatch();
+    const { products, loading } = useSelector(state => state.products);
+    const navigate = useNavigate();
 
-    const dispatch = useDispatch()
-    const { products, loading } = useSelector(state => state.products)
+    // useEffect(() => {
+    //     setPrice("");
+    //     setDiscount("");
+    //     setRating("");
+    //     setSortby("");
+    //     setPage(page);
 
 
-    useEffect(() => {
-        setPrice("");
-        setDiscount("");
-        setRating("");
-        setSortby("");
-        setPage(page);
-        setSk(searchParams.get("sk"));
-
-    }, [pathname, path])
+    // }, [pathname, path])
 
     useEffect(() => {
         let param = {};
@@ -53,28 +47,27 @@ export const Products = () => {
         page && (param.page = page);
         (Cookies.get("sk") || searchParams.get("sk")) && (param.sk = Cookies.get("sk") || searchParams.get("sk"));
         setSearchParams(param)
-        setSearch(location.search)
 
-    }, [rating, discount, price, sortBy, page, pathname, path, location.search, searchParams, setSearchParams])
+
+    }, [rating, discount, price, sortBy, page, path, location.search])
+    console.log(location.search);
 
     useEffect(() => {
         dispatch(productRequest())
-
-        api.get(`/products/${path}${location.search}`)
-            .then((res) => {
-                setTotal(res.data.total)
-                dispatch(productSuccess(res.data.data))
-            })
-            .catch((err) => {
-                // console.log(err)
-                dispatch(productFailure())
-                setTotal(0)
-                setIsErr(true)
-            })
-
-
-
-    }, [search, path, location.search, dispatch, api])
+        if (location.search) {
+            api.get(`/products/${path}${location.search}`)
+                .then((res) => {
+                    setTotal(res.data.total)
+                    dispatch(productSuccess(res.data.data))
+                })
+                .catch((err) => {
+                    // console.log(err)
+                    dispatch(productFailure())
+                    setTotal(0)
+                    setIsErr(true)
+                })
+        }
+    }, [path, location.search, dispatch])
 
     useEffect(() => {
         setSideloading(false)
@@ -97,8 +90,13 @@ export const Products = () => {
         }, 100)
 
     }
+
+    const goBack = () => {
+        navigate("/")
+    }
+
     return (
-        <Box zIndex={0} >
+        <Box   >
             {
                 // filter part
                 sideloading ?
@@ -214,11 +212,12 @@ export const Products = () => {
                     </Stack>
                     : <></>
             }
-            <Box id="right-section" overflowY={"scroll"} p={["1rem", "2rem", "2rem", "2rem"]} bg="rgb(248,248,248)" ml={["0px", "150px", "200px", "250px"]} h={"85vh"} >
+            <Box overflowY={"scroll"} p={["1rem", "2rem", "2rem", "2rem"]} bg="rgb(248,248,248)" ml={["0px", "150px", "200px", "250px"]} h={"85vh"} >
                 {/* soriting */}
                 {!isErr ?
                     <>
-                        <HStack p="5px" justifyContent={"end"} >
+                        <HStack p="5px" justifyContent={"space-between"} >
+                            <Button onClick={goBack} >Home</Button>
                             <Select size='xs' w={"200px"} onChange={(e) => setSortby(e.target.value)}>
                                 <option value='null'>sort by: default</option>
                                 <option value='asc'>sort by: price: Low-to-High</option>

@@ -2,9 +2,9 @@
 
 // import React, { useState } from 'react';
 
-import { SearchIcon } from "@chakra-ui/icons";
-import { Box, Input, InputGroup, InputLeftElement, List, ListItem, Text, VStack } from "@chakra-ui/react";
-import { useState } from "react";
+// import { SearchIcon } from "@chakra-ui/icons";
+// import { Box, Input, InputGroup, InputLeftElement, List, ListItem, Text, VStack } from "@chakra-ui/react";
+// import { useState } from "react";
 
 // const Demo = () => {
 
@@ -484,48 +484,78 @@ import { useState } from "react";
 // export default Demo;
 
 
-const SearchBox = () => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [suggestions, setSuggestions] = useState([]);
+// const SearchBox = () => {
+//     const [searchTerm, setSearchTerm] = useState('');
+//     const [suggestions, setSuggestions] = useState([]);
 
-    const handleSearch = (event) => {
-        const value = event.target.value;
-        setSearchTerm(value);
-        // Perform search and update suggestions
-        // You can make an API call or use local data to fetch the suggestions
-        const newSuggestions = fetchSuggestions(value); // Replace with your logic
-        setSuggestions(newSuggestions);
-    };
+//     const handleSearch = (event) => {
+//         const value = event.target.value;
+//         setSearchTerm(value);
+//         // Perform search and update suggestions
+//         // You can make an API call or use local data to fetch the suggestions
+//         const newSuggestions = fetchSuggestions(value); // Replace with your logic
+//         setSuggestions(newSuggestions);
+//     };
 
-    const fetchSuggestions = (value) => {
-        // Perform your search logic here and return an array of suggestions
-        // For example, you can filter an array based on the search term
-        const filteredSuggestions = ['Apple', 'Apricot', 'Avocado', 'Banana', 'Blackberry', 'Blueberry', 'Cherry', 'Coconut', 'Cucumber', 'Durian', 'Fig', 'Grapefruit', 'Grapes', 'Kiwi', 'Lemon', 'Lime', 'Lychee', 'Mandarin', 'Mango', 'Melon', 'Nectarine', 'Orange', 'Papaya', 'Passion', 'Peach', 'Pear', 'Pineapple', 'Plum', 'Pomegranate', 'Pomelo', 'Raspberry', 'Strawberry', 'Watermelon'];
+//     const fetchSuggestions = (value) => {
+//         // Perform your search logic here and return an array of suggestions
+//         // For example, you can filter an array based on the search term
+//         const filteredSuggestions = ['Apple', 'Apricot', 'Avocado', 'Banana', 'Blackberry', 'Blueberry', 'Cherry', 'Coconut', 'Cucumber', 'Durian', 'Fig', 'Grapefruit', 'Grapes', 'Kiwi', 'Lemon', 'Lime', 'Lychee', 'Mandarin', 'Mango', 'Melon', 'Nectarine', 'Orange', 'Papaya', 'Passion', 'Peach', 'Pear', 'Pineapple', 'Plum', 'Pomegranate', 'Pomelo', 'Raspberry', 'Strawberry', 'Watermelon'];
 
-        return filteredSuggestions;
-    };
+//         return filteredSuggestions;
+//     };
 
-    return (
-        <Box>
-            <InputGroup>
-                <InputLeftElement pointerEvents="none" children={<SearchIcon />} />
-                <Input
-                    placeholder="Search..."
-                    value={searchTerm}
-                    onChange={handleSearch}
-                />
-            </InputGroup>
-            <VStack align="start" mt={2}>
-                <List>
-                    {suggestions.map((suggestion) => (
-                        <ListItem key={suggestion}>
-                            <Text>{suggestion}</Text>
-                        </ListItem>
-                    ))}
-                </List>
-            </VStack>
-        </Box>
-    );
-};
+//     return (
+//         <Box>
+//             <InputGroup>
+//                 <InputLeftElement pointerEvents="none" children={<SearchIcon />} />
+//                 <Input
+//                     placeholder="Search..."
+//                     value={searchTerm}
+//                     onChange={handleSearch}
+//                 />
+//             </InputGroup>
+//             <VStack align="start" mt={2}>
+//                 <List>
+//                     {suggestions.map((suggestion) => (
+//                         <ListItem key={suggestion}>
+//                             <Text>{suggestion}</Text>
+//                         </ListItem>
+//                     ))}
+//                 </List>
+//             </VStack>
+//         </Box>
+//     );
+// };
 
-export default SearchBox;
+// export default SearchBox;
+
+
+// import React, { useState, useEffect } from 'react';
+
+// const Demo = () => {
+//     const [isVisible, setIsVisible] = useState(true);
+//     const [prevScrollPos, setPrevScrollPos] = useState(0);
+
+//     useEffect(() => {
+//         const handleScroll = () => {
+//             const currentScrollPos = window.pageYOffset;
+//             const isScrollingUp = prevScrollPos > currentScrollPos;
+
+//             setIsVisible(isScrollingUp);
+//             setPrevScrollPos(currentScrollPos);
+//         };
+
+//         window.addEventListener('scroll', handleScroll);
+//         return () => window.removeEventListener('scroll', handleScroll);
+//     }, [prevScrollPos]);
+
+//     return (
+//         <div>
+//             {isVisible && <div>Scroll Up to Hide Me</div>}
+//             {!isVisible && <div>Scroll Down to Show Me</div>}
+//         </div>
+//     );
+// };
+
+// export default Demo;

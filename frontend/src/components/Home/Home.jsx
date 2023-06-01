@@ -1,5 +1,5 @@
 import { Box, HStack, Heading, Image, SimpleGrid, Stack, VStack } from '@chakra-ui/react'
-import React from 'react'
+import React, { useEffect } from 'react'
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import Carousel from 'better-react-carousel'
 import h1 from "../../assets/h1.jpg"
@@ -106,25 +106,28 @@ const Home = () => {
 
     }, [])
 
-    console.table(kids)
-
-
     const backToTop = () => {
-        window.scrollTo(0, 10);
+        window.scroll({
+            top: 100,
+            left: 100,
+            behavior: "smooth",
+        });
 
 
     }
 
 
+
+
     return (
-        <div>
-            <Box w={"100%"} h={"fit-content"} border={"1px"} mb={["-70px", "-100px", "-160px"]} >
+        <Box >
+            <Box border={"1px"} mb={["-70px", "-100px", "-160px"]} >
 
                 <Box zIndex={2}>
                     <Carousel autoplay={2000} cols={1} rows={1} gap={10} loop >
                         {hero.map((image, index) => {
                             return (
-                                < Carousel.Item >
+                                < Carousel.Item key={index} >
                                     {<Image w={"100%"} src={image} alt={image.title} />
                                     }
 
@@ -249,7 +252,7 @@ const Home = () => {
                 <h1>hi mitro</h1>
             </Box>
             <Footer backToTop={backToTop} />
-        </div>
+        </Box>
     )
 }
 

@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { productSuccess } from '../../reducers/productSlice'
 import Cookies from 'js-cookie'
+import { cartFailure } from '../../reducers/cartSlice'
 const Navbar = () => {
     const [cookies, setCookie, removeCookie] = useCookies(['refreshToken'])
     const { isAuth, accessToken, user } = useSelector(state => state.user)
@@ -26,13 +27,18 @@ const Navbar = () => {
     const [loading, setLoading] = React.useState(false)
     const [searchParams, setSearchParams] = useSearchParams()
     const [seachQuery, setSearchQuery] = React.useState("")
+
+    const { cartItems } = useSelector(state => state.cart)
+
     const handleLogout = () => {
         removeCookie('refreshToken');
+        dispatch(cartFailure())
         dispatch(loginFailure())
         navigate("/user/login")
     }
     const redirectToLogin = () => {
         removeCookie('refreshToken');
+        dispatch(cartFailure())
         dispatch(loginFailure())
         navigate("/user/login")
     }
@@ -59,7 +65,6 @@ const Navbar = () => {
             console.log("api call")
             const res = await axios.get(`http://localhost:8080/products/search?sk=${seachQuery}`)
             const data = await res.data
-            dispatch(productSuccess(data.data))
             setSearchData(data.data)
             console.log(data)
         } catch (error) {
@@ -76,9 +81,7 @@ const Navbar = () => {
 
 
     const handleOvelay = (e) => {
-        if (e.target.id === "overlay1") {
-            setSearchData([])
-        }
+        setSearchData([])
     }
 
     const searchBtn = () => {
@@ -102,7 +105,7 @@ const Navbar = () => {
 
 
     return (
-        <Box position={"sticky"} top={0} zIndex={1}>
+        <Box position={"sticky"} top={0} zIndex={50}>
             <Drawer
                 isOpen={isOpen}
                 placement='left'
@@ -177,19 +180,19 @@ const Navbar = () => {
                     </Box>
                     {/* Account and cart section */}
                     <HStack w={["50%", "50%", "30%"]} gap={"10%"} justifyContent="end">
-                        <Menu>
+                        <Menu >
                             <MenuButton border={"1px"} borderColor="black" _hover={{ borderColor: "white" }} >
                                 <HStack p={"3px"} border={"1px"} borderColor="black" width={"-moz-fit-content"} >
                                     <Text fontSize={"sm"} display={["none", "block", "block"]} >{isAuth ? `Hi ${user.name}` : "Sign in"}</Text>
                                     <AiOutlineUser size={["20px"]} />
                                 </HStack>
                             </MenuButton>
-                            <MenuList boxShadow={"dark-lg"}>
+                            <MenuList zIndex={100} boxShadow={"dark-lg"}>
                                 <MenuItem>
-                                    <Box w={"100%"}>
+                                    <Box width={"100%"}>
                                         <Box borderRadius={"5px"} color={"black"} cursor={"auto"} bg={"white"}  >
                                             <Box textAlign={"center"} mb="10px" display={isAuth ? "none" : "block"}>
-                                                <Link to={"/user/login"}><Button bg={"yellow.400"} _hover={{ bg: "yellow.500" }} w={"100%"}>Sign in</Button></Link>
+                                                <Link to={"/user/login"}><Box bg={"yellow.400"} _hover={{ bg: "yellow.500" }} w={"100%"}>Sign in</Box></Link>
                                                 <Text fontSize={"sm"}>New User ?<Link to="/user/signup"> Sign up</Link></Text>
                                             </Box>
                                             <Stack spacing={1} justifyContent="flex-start" >
@@ -212,21 +215,26 @@ const Navbar = () => {
                                 </MenuItem>
                             </MenuList>
                         </Menu>
-                        <HStack p={"3px"} border={"1px"} borderColor="black" _hover={{ borderColor: "white" }} className="nav-cart" textAlign="end" width={"-moz-fit-content"}>
-                            <Text fontSize={"sm"} display={["none", "none", "block"]}>Cart</Text>
-                            <AiOutlineShoppingCart size={["20px"]} />
-                        </HStack>
+                        <Link to={"/cart"}>
+                            <HStack p={"3px"} border={"1px"} borderColor="black" _hover={{ borderColor: "white" }} className="nav-cart" textAlign="end" width={"-moz-fit-content"}>
+                                <Text fontSize={"sm"} display={["none", "none", "block"]}>Cart</Text>
+                                <AiOutlineShoppingCart size={["20px"]} />
+
+                                <Text position={"relative"} top={"-14px"} right={"10px"} w={"20px"} h={"20px"} borderRadius={"45%"} textAlign={"center"} fontSize={"xs"} bg={"red"} fontWeight={"bold"} color={"white"}>{cartItems.length}</Text>
+
+                            </HStack>
+                        </Link>
                     </HStack>
                 </HStack>
                 {/* Mobile Navbar */}
                 <Box className="mob-nav-search" w={"100%"} m="auto" mb="10px" display={["flext", "flex", "none"]} justifyContent='center' >
                     <Box w={"100%"} className="input-group" >
                         <Input zIndex={80} onChange={(e) => handleSearchQuery(e)} borderLeftRadius={"10px"} pl='10px' color={"black"} bg={"white"} w={"90%"} type="text" borderRadius={"0px"} variant='unstyled' border={"0px"} />
-                        <Button zIndex={80} borderRadius={"0px"} backgroundColor={"yellow.400"} _hover={{ bg: "yellow.500" }} borderRightRadius={"10px"} w='10%'><SearchIcon color={"black"} /></Button>
+                        <Button isLoading={loading} onClick={searchBtn} zIndex={80} borderRadius={"0px"} backgroundColor={"yellow.400"} _hover={{ bg: "yellow.500" }} borderRightRadius={"10px"} w='10%'><SearchIcon color={"black"} /></Button>
                     </Box>
                 </Box>
             </Box>
-            <Box display={["none", "none", "block"]} className='category' color={"white"} bg={"rgb(35,47,62)"} p={"5px"} alignItems='center'>
+            <Box pos={"sticky"} top={"30px"} left={"0"} display={["none", "none", "block"]} className='category' color={"white"} bg={"rgb(35,47,62)"} p={"5px"} alignItems='center'>
                 <HStack justifyContent={"space-between"}  >
                     <HStack className='category-hover' onClick={onOpen}>
                         <HamburgerIcon />
@@ -239,7 +247,7 @@ const Navbar = () => {
                     <Link to="/products/womens"><Box className='category-hover'><Text>Women's Fashion</Text></Box></Link>
                     <Link to="/products/kids"><Box className='category-hover'><Text>Kid's Fashion</Text></Box></Link>
                     <Link to="/products/beauty"><Box className='category-hover'><Text>Beauty</Text></Box></Link>
-                    <Link to="/products/health&fitness"><Box className='category-hover'><Text>Health & Fitness</Text></Box></Link>
+                    <Link to="/products/helth&fitness"><Box className='category-hover'><Text>Health & Fitness</Text></Box></Link>
                     <Link to="/products/books"><Box className='category-hover'><Text>Books</Text></Box></Link>
                 </HStack>
             </Box>
@@ -252,7 +260,7 @@ const Navbar = () => {
                 m={0}
             >
 
-                <Box overflowY={"scroll"} color={"black"} position={"relative"} top={["95px", "100px", "50px"]} left={["10px", "20px", "260px"]} width={["90%", "90%", "40%"]} h={"300px"} bg={"white"} zIndex={50} >
+                <Box p="10px" overflowY={"scroll"} color={"black"} position={"relative"} top={["95px", "100px", "50px"]} left={["10px", "20px", "280px"]} width={["90%", "90%", "40%"]} h={"300px"} bg={"white"} zIndex={50} >
 
                     {
                         searchData.length && searchData.map((item, index) => {
@@ -261,7 +269,7 @@ const Navbar = () => {
                                     <HStack className="search-item" w={"100%"} p={"10px"} _hover={{ bg: "gray.200" }} >
                                         <Image w={"30px"} h={"30px"} src={item.image} />
                                         <Box textAlign={"left"}>
-                                            <Heading>{item.category}</Heading>
+                                            <Heading size={"md"}>{item.category}</Heading>
                                             <Text fontSize={"sm"}>{item.title}</Text>
                                         </Box>
                                     </HStack>

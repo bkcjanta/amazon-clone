@@ -2,17 +2,17 @@ const express = require("express");
 const productsRoute = express.Router();
 const { productsModel } = require("../Models/Products.model");
 const { sortBy } = require("lodash");
-productsRoute.get("/", async (req, res) => {
-    try {
-        const products = await productsModel.find();
-        res.send(products)
-        res.end()
-    } catch (err) {
-        console.log(err);
-        res.send({ "msg": "Something went wrong" })
+// productsRoute.get("/", async (req, res) => {
+//     try {
+//         const products = await productsModel.find();
+//         res.send(products)
+//         res.end()
+//     } catch (err) {
+//         console.log(err);
+//         res.send({ "msg": "Something went wrong" })
 
-    }
-})
+//     }
+// })
 productsRoute.get("/:path", async (req, res) => {
     // console.log(req.params.path);
     const pathname = req.params.path
@@ -46,7 +46,7 @@ productsRoute.get("/:path", async (req, res) => {
     }
     if (!!param.sk) {
         const searchRegex = new RegExp(param.sk, 'i');
-        console.log(searchRegex);
+        // console.log(searchRegex);
         arr.push({
             "$or": [
                 { category: { $regex: searchRegex } },
@@ -70,11 +70,12 @@ productsRoute.get("/:path", async (req, res) => {
 })
 
 productsRoute.get("/:path/:details/:_id", async (req, res) => {
-    const category = req.params.path;
+    let category = req.params.path;
     const _id = req.params._id;
+    console.log(req.params)
 
     try {
-        const data = await productsModel.findOne({ $and: [{ category: category }, { _id: _id }] })
+        const data = await productsModel.findOne({ $and: [{ _id: _id }] })
         res.send(data)
         res.end()
     } catch (err) {

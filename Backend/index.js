@@ -7,6 +7,7 @@ const { productsRoute } = require("./Routes/product.route")
 const { usersRoute } = require("./Routes/user.route");
 const { authRoute } = require("./Routes/auth.route");
 const { tokenRoute } = require("./Routes/token.route");
+const { cartRoute } = require("./Routes/cart.route");
 const { authenticate } = require("./Middlewares/authentication");
 const expressSession = require('express-session');
 const app = express()
@@ -20,6 +21,7 @@ app.use(cors({
 
 
 app.use("/products", productsRoute);
+app.use("/cart", authenticate, cartRoute);
 app.use("/user", usersRoute);
 app.use("/auth", authRoute);
 app.use("/accesstoken", tokenRoute);

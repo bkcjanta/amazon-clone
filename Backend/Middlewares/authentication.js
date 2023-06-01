@@ -2,13 +2,10 @@ require('dotenv').config()
 const jwt = require("jsonwebtoken")
 
 const authenticate = async (req, res, next) => {
-    // console.log(req.headers)
     var accessToken = req.headers?.authorization?.split(" ")[1]
-    console.log(accessToken)
     if (accessToken) {
         try {
             const decoded = await jwt.verify(accessToken, process.env.ACCESS_TOKEN_PRIVATE_KEY)
-            console.log(decoded)
             req.body.userID = decoded.userID
             next()
 
@@ -23,3 +20,4 @@ const authenticate = async (req, res, next) => {
 }
 
 module.exports = { authenticate }
+

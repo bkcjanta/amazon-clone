@@ -46,7 +46,7 @@ usersRoute.post("/login", async (req, res) => {
                               accessToken: accessToken,
                         }
                         
-                        res.cookie("refreshToken", refreshToken, { maxAge: 1000*60*5, httpOnly: false, secure: false }).status(200).send({ msg: "Login Success", user: userObj });
+                        res.cookie("refreshToken", refreshToken, { maxAge: 1000*60*20, httpOnly: false, secure: false }).status(200).send({ msg: "Login Success", user: userObj });
                   }else{
                         res.status(400).send({ msg: "Invalid Username or Password" });
                   }
@@ -63,7 +63,7 @@ usersRoute.post("/login", async (req, res) => {
 })
 
                              
-      
+
 
 module.exports = { usersRoute };
 

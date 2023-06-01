@@ -8,9 +8,14 @@ import { HiLockClosed, HiOutlineLocationMarker } from "react-icons/hi"
 import { CiPercent } from "react-icons/ci"
 import ProductCard from './ProductCard';
 import { IoIosArrowForward } from "react-icons/io"
-import useAxios from '../../useAxios';
 import Carousel from 'better-react-carousel'
 import Footer from '../Footer/Footer';
+import Loading from '../Loading';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
+import { api } from '../../AxiosConfig';
+import { useDispatch } from 'react-redux';
+import { loginFailure } from '../../reducers/userSlice';
 
 export const Details = () => {
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -23,8 +28,7 @@ export const Details = () => {
         { tag: "Partner Offers", des: "Get GST invoice and save up to 28% on business purchases.", no: 1 }
     ]
 
-    const api = useAxios();
-
+    const dispatch = useDispatch()
     let location = useLocation()
     const path = location.pathname.split("/")[2]
     const { _id } = useParams();
@@ -32,10 +36,12 @@ export const Details = () => {
     const [related_data, setRelated_data] = useState([])
     const [isLoading, setIsLoading] = useState(false);
     const [page, setPage] = useState(0);
+    const [qty, setQty] = useState(1);
+    const navigate = useNavigate();
     useEffect(() => {
         setPage(0)
         setIsLoading(true)
-        api.get(`/products/${path}/details/${_id}`)
+        axios.get(`/products/${path}/details/${_id}`)
             .then((res) => {
                 console.log(res.data)
                 setData(res.data)
@@ -61,12 +67,32 @@ export const Details = () => {
 
     }
 
+    const addToCart = async () => {
+        if (!Cookies.get("refreshToken")) {
+
+        }
+        try {
+            const obj = { ...data, quantity: qty }
+            let res = await api.post(`/cart`, obj)
+            console.log(res)
+            navigate("/cart")
+
+        } catch (error) {
+            if (error.status === 401) {
+                dispatch(loginFailure())
+                navigate("/user/login")
+            }
+        }
+
+    }
+
+
     return (
         <Box>
             {
                 !isLoading ?
 
-                    <Stack >
+                    <Stack mb={"130px"} >
                         <Box w={"100%"} boxShadow={"2xl"}> <Image m={"auto"} src='https://m.media-amazon.com/images/I/21neM1UGaYL.jpg' />
                         </Box>
                         <HStack mt={"1rem"} p={"1rem"} spacing={1} justifyContent="space-between" >
@@ -132,19 +158,19 @@ export const Details = () => {
                                     <Text fontSize={"14px"}>Sold by xyz and delivered by Amazon.</Text>
                                     <HStack>
                                         <label htmlFor="">Quantity :</label>
-                                        <Select w={"-moz-fit-content"}>
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
-                                            <option value="4">4</option>
-                                            <option value="5">5</option>
-                                            <option value="6">6</option>
-                                            <option value="7">7</option>
-                                            <option value="8">8</option>
-                                            <option value="9">9</option>
+                                        <Select w={"-moz-fit-content"} onChange={(e) => setQty(e.target.value)}>
+                                            <option value={1}>1</option>
+                                            <option value={2}>2</option>
+                                            <option value={3}>3</option>
+                                            <option value={4}>4</option>
+                                            <option value={5}>5</option>
+                                            <option value={6}>6</option>
+                                            <option value={7}>7</option>
+                                            <option value={8}>8</option>
+                                            <option value={9}>9</option>
                                         </Select>
                                     </HStack>
-                                    <Button bg={"rgb(255,216,20)"} _hover={{ bg: "rgb(234, 196, 6)" }} >Add to Cart</Button>
+                                    <Button bg={"rgb(255,216,20)"} _hover={{ bg: "rgb(234, 196, 6)" }} onClick={addToCart} >Add to Cart</Button>
                                     <Button bg={"rgb(255,164,28)"} _hover={{ bg: "rgb(240, 148, 10)" }}>Buy Now</Button>
                                     <HStack>
                                         <HiLockClosed />
@@ -154,7 +180,7 @@ export const Details = () => {
                             </Stack>
                         </HStack>
                         <Divider h={"10px"} />
-                        <Stack h={"200px"} px={"4rem"} mb={"400px"}>
+                        <Stack px={"4rem"} mb={"150px"}>
                             <Heading textAlign={"left"}>Products related to this item</Heading>
                             <Carousel cols={4} rows={1} gap={10}  >
                                 {
@@ -162,8 +188,8 @@ export const Details = () => {
 
                                         return (
 
-                                            <Carousel.Item>
-                                                <ProductCard key={i}
+                                            <Carousel.Item key={i}>
+                                                <ProductCard
                                                     image={item.image} title={item.title}
                                                     rating={item.rating} review={item.review}
                                                     price={item.price} mrp={item.mrp} category={item.category}
@@ -178,11 +204,11 @@ export const Details = () => {
                                 }
                             </Carousel>
                         </Stack>
-                        {/* <Footer backToTop={backToTop} /> */}
+                        <Footer backToTop={backToTop} />
                     </Stack>
 
                     :
-                    <Text color={"green.400"}>Loading...</Text>
+                    <Loading />
             }
 
 
