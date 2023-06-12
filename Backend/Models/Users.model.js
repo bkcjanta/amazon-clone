@@ -8,17 +8,23 @@ const usersSchema = mongoose.Schema({
     },
     name: { type: String, required: true, default: "" },
     email: { type: String, required: true, default: "" },
-    // mobile: { type: String, required: true, default: "" },
+    mobile: { type: String, required: true, default: "" },
     password: { type: String, required: true, default: "" },
-    address: {
+    address: [{
+        street: String,
         city: String,
-        pin: Number,
+        state: String,
+        zip: String,
         country: String,
-        house_no: String,
-        address: String,
+        mobile: String,
+        fullName: String,
+        flat: String,
         landmark: String,
-        district: String
+        area: String,
+        town: String,
+
     }
+    ]
 })
 
 const usersModel = mongoose.model("user", usersSchema);

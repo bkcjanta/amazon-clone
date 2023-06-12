@@ -15,7 +15,7 @@ usersRoute.post("/signup", async (req, res) => {
             try {
                  hash= await bcrypt.hash(password, 10);
                   if(hash){
-                        const newUser = new usersModel({ name, email, password:hash });
+                        const newUser = new usersModel({ name, email, password: hash, mobile });
                         const user = await newUser.save();
                         console.log(user)
                         res.status(200).send({ msg: "User Created Successfully!" ,user:user});
@@ -43,10 +43,11 @@ usersRoute.post("/login", async (req, res) => {
                        let userObj = {
                               name: user.name,
                               email: user.email,
+                              mobile:user.mobile,
                               accessToken: accessToken,
                         }
                         
-                        res.cookie("refreshToken", refreshToken, { maxAge: 1000*60*20, httpOnly: false, secure: false }).status(200).send({ msg: "Login Success", user: userObj });
+                        res.cookie("refreshToken", refreshToken, { maxAge: 1000*60*60, httpOnly: false, secure: false }).status(200).send({ msg: "Login Success", user: userObj });
                   }else{
                         res.status(400).send({ msg: "Invalid Username or Password" });
                   }

@@ -26,6 +26,7 @@ tokenRoute.get("/", (req, res) => {
                     name: user.name,
                     email: user.email,
                     accessToken: accessToken,
+                    mobile: user.mobile,
                 }
                 res.status(200).send({ user: userObj });
             }

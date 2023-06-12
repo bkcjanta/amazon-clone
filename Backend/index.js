@@ -8,6 +8,8 @@ const { usersRoute } = require("./Routes/user.route");
 const { authRoute } = require("./Routes/auth.route");
 const { tokenRoute } = require("./Routes/token.route");
 const { cartRoute } = require("./Routes/cart.route");
+const { orderRoute } = require("./Routes/order.route")
+const { addressRoute } = require("./Routes/address.route")
 const { authenticate } = require("./Middlewares/authentication");
 const expressSession = require('express-session');
 const app = express()
@@ -22,6 +24,8 @@ app.use(cors({
 
 app.use("/products", productsRoute);
 app.use("/cart", authenticate, cartRoute);
+app.use("/order", authenticate, orderRoute);
+app.use("/address", authenticate, addressRoute);
 app.use("/user", usersRoute);
 app.use("/auth", authRoute);
 app.use("/accesstoken", tokenRoute);
