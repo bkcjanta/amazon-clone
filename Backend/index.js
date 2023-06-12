@@ -21,6 +21,9 @@ app.use(cors({
     optionSuccessStatus: 200,      //access-control-allow-credentials:true  
 }))
 
+app.get("/", (req, res) => {
+    res.send("hello world")
+})
 
 app.use("/products", productsRoute);
 app.use("/cart", authenticate, cartRoute);
