@@ -14,7 +14,7 @@ const { sortBy } = require("lodash");
 //     }
 // })
 productsRoute.get("/:path", async (req, res) => {
-    // console.log(req.params.path);
+
     const pathname = req.params.path
     const param = req.query
     console.log(param)
