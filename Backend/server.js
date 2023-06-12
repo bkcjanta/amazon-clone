@@ -35,11 +35,11 @@ app.use("/accesstoken", tokenRoute);
 
 
 //connecting to database and running server
-app.listen(process.env.PORT, async () => {
+app.listen(8080, async () => {
     try {
         connect();
         console.log("DB is Connected to Sucessssfully....");
-        console.log(`http://localhost:${process.env.PORT}`);
+        console.log(`http://localhost:8080`);
 
     } catch (e) {
         console.log("DB is connected to failed!!!!!")
