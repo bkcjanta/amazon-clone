@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "index.js"
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",
@@ -19,7 +19,6 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "mongoose": "^6.8.0",
-    "nodemon": "^2.0.20",
     "otp-generator": "^4.0.0",
     "otp-verify": "^1.0.5",
     "passport": "^0.6.0",
