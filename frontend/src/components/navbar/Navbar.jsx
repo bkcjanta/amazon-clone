@@ -11,10 +11,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useCookies } from 'react-cookie'
 import { loginFailure, loginRequest, loginSuccess } from '../../reducers/userSlice';
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
 import { productSuccess } from '../../reducers/productSlice'
 import Cookies from 'js-cookie'
 import { cartFailure } from '../../reducers/cartSlice'
+import useLogout from '../../hookes/useLogout'
+import { axiosApi } from '../../AxiosConfig'
+
 const Navbar = () => {
     const [cookies, setCookie, removeCookie] = useCookies(['refreshToken'])
     const { isAuth, accessToken, user } = useSelector(state => state.user)
@@ -27,15 +29,16 @@ const Navbar = () => {
     const [loading, setLoading] = React.useState(false)
     const [searchParams, setSearchParams] = useSearchParams()
     const [seachQuery, setSearchQuery] = React.useState("")
+    const { logOut } = useLogout()
 
     const { cartItems } = useSelector(state => state.cart)
 
-    const handleLogout = () => {
-        removeCookie('refreshToken');
-        dispatch(cartFailure())
-        dispatch(loginFailure())
-        navigate("/user/login")
-    }
+    // const handleLogout = () => {
+    //     removeCookie('refreshToken');
+    //     dispatch(cartFailure())
+    //     dispatch(loginFailure())
+    //     navigate("/user/login")
+    // }
     const redirectToLogin = () => {
         removeCookie('refreshToken');
         dispatch(cartFailure())
@@ -63,7 +66,7 @@ const Navbar = () => {
 
         try {
             console.log("api call")
-            const res = await axios.get(`http://localhost:8080/products/search?sk=${seachQuery}`)
+            const res = await axiosApi.get(`https://thoughtful-colt-cuff.cyclic.app/products/search?sk=${seachQuery}`)
             const data = await res.data
             setSearchData(data.data)
             console.log(data)
@@ -105,7 +108,7 @@ const Navbar = () => {
 
 
     return (
-        <Box position={"sticky"} top={0} zIndex={50}>
+        <Box position={"sticky"} top={0} zIndex={50} w={"100%"}>
             <Drawer
                 isOpen={isOpen}
                 placement='left'
@@ -118,11 +121,11 @@ const Navbar = () => {
                     <DrawerHeader color={"white"} bg={"rgb(35,47,62)"} p={"20px"}>
                         <HStack>
                             <FaUserCircle size={["30px"]} />
-                            <Text fontSize={"sm"}>{isAuth ? `Hi ${user.name}` : "Sign in"}</Text>
+                            <Text fontSize={"sm"}>{isAuth ? `Hi ${user.name.split(" ")[0].toUpperCase()}` : "Sign in"}</Text>
                         </HStack>
                     </DrawerHeader>
                     <DrawerBody>
-                        <Stack spacing={1}>
+                        <Stack spacing={1} onClick={onClose}>
                             <Divider h={"4px"} />
                             <HStack py={3} justifyContent={"space-between"}>
                                 <Heading fontSize={"lg"}>Amazon Home</Heading>
@@ -151,9 +154,9 @@ const Navbar = () => {
                             <Divider h={"4px"} />
                             <Box>
                                 <Heading fontSize={"lg"}>Setting</Heading>
-                                <Box className='category-side'><Text>Account</Text></Box>
+                                <Link to={"/user/account"}><Box className='category-side'><Text>Account</Text></Box></Link>
                                 <Box className='category-side'><Text>High Rating</Text></Box>
-                                <Box className='category-side' onClick={cookies.refreshToken ? handleLogout : redirectToLogin}><Text>Logout</Text></Box>
+                                <Box className='category-side' onClick={cookies.refreshToken ? logOut : logOut}><Text>Logout</Text></Box>
                             </Box>
                             <Divider h={"4px"} />
                         </Stack>
@@ -183,8 +186,8 @@ const Navbar = () => {
                         <Menu >
                             <MenuButton border={"1px"} borderColor="black" _hover={{ borderColor: "white" }} >
                                 <HStack p={"3px"} border={"1px"} borderColor="black" width={"-moz-fit-content"} >
-                                    <Text fontSize={"sm"} display={["none", "block", "block"]} >{isAuth ? `Hi ${user.name}` : "Sign in"}</Text>
-                                    <AiOutlineUser size={["20px"]} />
+                                    <Text fontSize={["sm"]} display={["none", "block", "block"]} >{isAuth ? `Hi ${user.name.split(" ")[0].toUpperCase()}` : "Sign in"}</Text>
+                                    <AiOutlineUser size={"20px"} />
                                 </HStack>
                             </MenuButton>
                             <MenuList zIndex={100} boxShadow={"dark-lg"}>
@@ -199,16 +202,13 @@ const Navbar = () => {
                                                 <Divider />
                                                 <Heading size="sm">Your Account</Heading>
                                                 <Divider />
-                                                <Text className='account-hover'>Account</Text>
+                                                <Link to={"/user/account"}><Text className='account-hover'>Account</Text></Link>
                                                 <Divider />
-
-                                                <Text className='account-hover'>Order</Text>
+                                                <Link to={"/user/orders"}><Text className='account-hover'>Orders</Text></Link>
                                                 <Divider />
-
-                                                <Text className='account-hover'>Address</Text>
-                                                <Divider />
-
-                                                <Text className='account-hover' onClick={isAuth ? handleLogout : redirectToLogin}>Logout</Text>
+                                                {
+                                                    isAuth ? <Text className='account-hover' onClick={isAuth ? logOut : logOut}>Logout</Text> : null
+                                                }
                                             </Stack>
                                         </Box>
                                     </Box>
@@ -220,7 +220,12 @@ const Navbar = () => {
                                 <Text fontSize={"sm"} display={["none", "none", "block"]}>Cart</Text>
                                 <AiOutlineShoppingCart size={["20px"]} />
 
-                                <Text position={"relative"} top={"-14px"} right={"10px"} w={"20px"} h={"20px"} borderRadius={"45%"} textAlign={"center"} fontSize={"xs"} bg={"red"} fontWeight={"bold"} color={"white"}>{cartItems.length}</Text>
+                                <Text position={"relative"} top={"-14px"}
+                                    right={"10px"} w={"20px"} h={"20px"} borderRadius={"45%"}
+                                    textAlign={"center"} fontSize={"xs"} bg={"red"} fontWeight={"bold"}
+                                    color={"white"}>
+                                    {cartItems.length}
+                                </Text>
 
                             </HStack>
                         </Link>
@@ -230,7 +235,9 @@ const Navbar = () => {
                 <Box className="mob-nav-search" w={"100%"} m="auto" mb="10px" display={["flext", "flex", "none"]} justifyContent='center' >
                     <Box w={"100%"} className="input-group" >
                         <Input zIndex={80} onChange={(e) => handleSearchQuery(e)} borderLeftRadius={"10px"} pl='10px' color={"black"} bg={"white"} w={"90%"} type="text" borderRadius={"0px"} variant='unstyled' border={"0px"} />
-                        <Button isLoading={loading} onClick={searchBtn} zIndex={80} borderRadius={"0px"} backgroundColor={"yellow.400"} _hover={{ bg: "yellow.500" }} borderRightRadius={"10px"} w='10%'><SearchIcon color={"black"} /></Button>
+                        <Button isLoading={loading} onClick={searchBtn} zIndex={80} borderRadius={"0px"} backgroundColor={"yellow.400"} _hover={{ bg: "yellow.500" }} borderRightRadius={"10px"} w='10%'>
+                            <SearchIcon color={"black"} />
+                        </Button>
                     </Box>
                 </Box>
             </Box>

@@ -4,6 +4,7 @@ import axios from 'axios'
 import logo from "./logo.png"
 import { Link } from 'react-router-dom'
 import { Box, Button, Divider, HStack, Heading, Image, Input, Stack, Text, useToast } from '@chakra-ui/react'
+import { useNavigate } from 'react-router-dom'
 export const Signup = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState("");
@@ -11,6 +12,8 @@ export const Signup = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
+
   const toast = useToast()
   const Signup = () => {
     if (name === '' || email === '' || mobile === '' || password === '' || confirmPassword === '') {
@@ -50,6 +53,7 @@ export const Signup = () => {
         })
 
         setLoading(false)
+        navigate('/user/login')
       }).catch((err) => {
         console.log(err)
         toast({

@@ -1,6 +1,8 @@
 import { Box, HStack, Heading, Image, SimpleGrid, Stack, VStack } from '@chakra-ui/react'
-import React, { useEffect } from 'react'
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import ProductCard from '../products/ProductCard';
+import { Link } from 'react-router-dom';
+import Footer from '../Footer/Footer';
 import Carousel from 'better-react-carousel'
 import h1 from "../../assets/h1.jpg"
 import h2 from "../../assets/h2.jpg"
@@ -46,14 +48,13 @@ import m1 from "../../assets/mens/m1.jpg"
 import m2 from "../../assets/mens/m2.jpg"
 import m3 from "../../assets/mens/m3.jpg"
 import m4 from "../../assets/mens/m4.jpg"
-
 import w1 from "../../assets/womens/w1.jpg"
 import w2 from "../../assets/womens/w2.jpg"
 import w3 from "../../assets/womens/w3.jpg"
 import w4 from "../../assets/womens/w4.jpg"
-import ProductCard from '../products/ProductCard';
-import { Link } from 'react-router-dom';
-import Footer from '../Footer/Footer';
+import { useEffect, useState } from 'react';
+
+
 
 
 
@@ -72,32 +73,25 @@ const cards = [{ title: "Mens Collections", image: mens, path: "mens" }, { title
 const hero = [h1, h2, h3, h4, h5, h6, h7, h8, h9]
 
 const Home = () => {
-    const [images, setImages] = React.useState([]);
-    const [products, setProducts] = React.useState([]);
-    const [mens, setMens] = React.useState([]);
-    const [womens, setWomens] = React.useState([]);
-    const [kids, setKids] = React.useState([]);
-    const [beauty, setBeauty] = React.useState([]);
-    const [fitness, setFitness] = React.useState([]);
-    const [books, setBooks] = React.useState([]);
-    const [electronics, setElectronics] = React.useState([]);
-    const [homes, setHomes] = React.useState([]);
+    const [mens, setMens] = useState([]);
+    const [womens, setWomens] = useState([]);
+    const [kids, setKids] = useState([]);
 
 
 
-    React.useEffect(() => {
+    useEffect(() => {
         window.scrollTo(0, 0)
-        fetch("http://localhost:8080/products/mens")
+        fetch("https://thoughtful-colt-cuff.cyclic.app/products/mens")
             .then(res => res.json())
             .then(data => setMens(data.data))
             .catch(err => console.log(err))
 
-        fetch("http://localhost:8080/products/womens")
+        fetch("https://thoughtful-colt-cuff.cyclic.app/products/womens")
             .then(res => res.json())
             .then(data => setWomens(data.data))
             .catch(err => console.log(err))
 
-        fetch("http://localhost:8080/products/kids", { withCredentials: true })
+        fetch("https://thoughtful-colt-cuff.cyclic.app/products/kids", { withCredentials: true })
             .then(res => res.json())
             .then(data => setKids(data.data))
             .catch(err => console.log(err))
@@ -142,7 +136,7 @@ const Home = () => {
                         {
                             cards.map((card, index) => {
                                 return (
-                                    <Link to={`products/${card.path}`}>
+                                    <Link to={`products/${card.path}`} key={card.path}>
                                         <VStack bg={"rgb(234, 242, 242)"} w={"100%"} boxShadow={"2xl"} padding={4} spacing={4}>
                                             <Heading size={"md"}>{card.title}</Heading>
                                             <HStack width={"100%"} justifyContent={"center"}>
@@ -150,7 +144,7 @@ const Home = () => {
                                                     {
                                                         card.image.map((image, index) => {
                                                             return (
-                                                                <Box w={["100%", "80%", "100%"]} >
+                                                                <Box w={["100%", "80%", "100%"]} key={index} >
                                                                     <Image h={["60px", "80px", "100px"]} width={"100%"} src={image} alt={image.title} />
                                                                 </Box>
                                                             )
@@ -176,8 +170,8 @@ const Home = () => {
                                         mens?.map((item, i) => {
                                             return (
 
-                                                <Carousel.Item key={i}>
-                                                    <ProductCard key={i}
+                                                <Carousel.Item key={item._id}>
+                                                    <ProductCard
                                                         image={item.image} title={item.title}
                                                         rating={item.rating} review={item.review}
                                                         price={item.price} mrp={item.mrp} category={item.category}
@@ -203,8 +197,8 @@ const Home = () => {
                                         womens?.map((item, i) => {
                                             return (
 
-                                                <Carousel.Item key={i}>
-                                                    <ProductCard key={i}
+                                                <Carousel.Item key={item._id}>
+                                                    <ProductCard
                                                         image={item.image} title={item.title}
                                                         rating={item.rating} review={item.review}
                                                         price={item.price} mrp={item.mrp} category={item.category}
@@ -230,8 +224,8 @@ const Home = () => {
                                         kids?.map((item, i) => {
                                             return (
 
-                                                <Carousel.Item key={i}>
-                                                    <ProductCard key={i}
+                                                <Carousel.Item key={item._id}>
+                                                    <ProductCard
                                                         image={item.image} title={item.title}
                                                         rating={item.rating} review={item.review}
                                                         price={item.price} mrp={item.mrp} category={item.category}

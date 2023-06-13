@@ -3,59 +3,38 @@ import './App.css';
 import Navbar from './components/navbar/Navbar';
 import React, { useEffect } from 'react';
 import Loading from './components/Loading';
-import { useCookies } from 'react-cookie';
 import { useDispatch } from 'react-redux';
-import axios from 'axios';
-import { loginFailure, loginRequest, loginSuccess } from './reducers/userSlice';
-import Footer from './components/Footer/Footer';
+
+import { loginFailure, loginSuccess } from './reducers/userSlice';
 import { Box } from '@chakra-ui/react';
-import { cartFailure, cartSuccess } from './reducers/cartSlice';
-import { api } from './AxiosConfig';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
-
+import useLogout from './hookes/useLogout';
+import { useLocation } from 'react-router-dom';
+import CheckoutNav from './components/checkout/CheckoutNav';
+import useGetCartData from './hookes/useGetCartData';
+import { axiosApi } from './AxiosConfig';
 
 
 function App() {
-  const [cookies, setCookie, removeCookie] = useCookies();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  useEffect(() => {
-
-
-    if (!Cookies.get("refreshToken")) {
-      dispatch(loginFailure());
-      return navigate("/user/login")
-    }
-    dispatch(loginRequest())
-    axios.get(`/accesstoken/`, {
-      withCredentials: true
-
-    })
-      .then((res) => {
-        console.log(res)
-        dispatch(loginSuccess(res.data.user))
-      })
-      .catch((err) => {
-        dispatch(loginFailure())
-        console.log(err)
-      }
-      )
-
-
-    api.get("/cart").then((res) => {
-      console.log(res.data);
-      dispatch(cartSuccess(res.data.data));
-    }).catch((err) => {
-      dispatch(cartFailure())
-      console.log(err);
-    })
-
-
-
-  }, [])
+  const { getCartData } = useGetCartData();
+  const location = useLocation();
+  const checkout = location.pathname.includes("checkout");
   const [show, setShow] = React.useState(false);
   useEffect(() => {
+    const getAccessToken = async () => {
+      try {
+        const res = await axiosApi.get(`/accesstoken/`, { withCredentials: true })
+        dispatch(loginSuccess(res.data.user));
+        getCartData()
+        console.log(res.data.user)
+      } catch (error) {
+        dispatch(loginFailure());
+        console.log(error);
+      }
+    }
+    getAccessToken();
     setTimeout(() => {
       setShow(true);
     }, 3000);
@@ -64,7 +43,9 @@ function App() {
     <div className="App">
       {show ?
         <Box >
-          <Navbar />
+          {
+            checkout ? <CheckoutNav /> : <Navbar />
+          }
           <AllRoutes />
 
           {/* <Footer /> */}

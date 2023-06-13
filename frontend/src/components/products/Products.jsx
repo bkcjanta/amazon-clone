@@ -1,15 +1,16 @@
-import { Box, Button, HStack, Heading, Menu, Radio, RadioGroup, Select, SimpleGrid, Stack, Text } from '@chakra-ui/react'
+import { Box, Button, HStack, Heading, Image, Menu, Radio, RadioGroup, Select, SimpleGrid, Stack, Text } from '@chakra-ui/react'
 import React, { useState, useEffect } from 'react'
 import ProductCard from './ProductCard'
 import ReactStarsRating from 'react-awesome-stars-rating';
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import axios from 'axios';
 import Loading from '../Loading';
-
 import { useDispatch, useSelector } from 'react-redux';
 import { productFailure, productRequest, productSuccess } from '../../reducers/productSlice';
 import Cookies from 'js-cookie';
-import { api } from '../../AxiosConfig';
+import { axiosApi } from '../../AxiosConfig';
+import Navbar from '../navbar/Navbar';
+import Footer from '../Footer/Footer';
+import done from "../../assets/done.gif"
 export const Products = () => {
 
     const location = useLocation();
@@ -27,6 +28,7 @@ export const Products = () => {
     const dispatch = useDispatch();
     const { products, loading } = useSelector(state => state.products);
     const navigate = useNavigate();
+
 
     // useEffect(() => {
     //     setPrice("");
@@ -50,18 +52,18 @@ export const Products = () => {
 
 
     }, [rating, discount, price, sortBy, page, path, location.search])
-    console.log(location.search);
+
 
     useEffect(() => {
         dispatch(productRequest())
         if (location.search) {
-            api.get(`/products/${path}${location.search}`)
+            axiosApi.get(`/products/${path}${location.search}`)
                 .then((res) => {
                     setTotal(res.data.total)
                     dispatch(productSuccess(res.data.data))
                 })
                 .catch((err) => {
-                    // console.log(err)
+                    console.log(err);
                     dispatch(productFailure())
                     setTotal(0)
                     setIsErr(true)
@@ -97,6 +99,7 @@ export const Products = () => {
 
     return (
         <Box   >
+
             {
                 // filter part
                 sideloading ?
@@ -256,6 +259,8 @@ export const Products = () => {
                     : <Text>Try checking your spelling or use more general terms</Text>
                 }
             </Box>
+
+
         </Box>
     )
 }

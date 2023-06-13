@@ -1,12 +1,11 @@
-import { Badge, Box, Button, ButtonGroup, Card, CardBody, CardFooter, Divider, HStack, Heading, Image, Stack, Text } from '@chakra-ui/react'
+import { Badge, Box, HStack, Image, Stack, Text } from '@chakra-ui/react'
 import React from 'react'
-import ReactStars from "react-stars"
 import ReactStarsRating from 'react-awesome-stars-rating';
 import "./products.css"
 import { Link } from 'react-router-dom';
 const ProductCard = ({ _id, image, title, price, mrp, rating, review, category, path }) => {
   return (
-    <Stack boxShadow={"lg"} p={["2px", "6px", "10px"]} direction={["row", "column", "column"]} bg={"whitesmoke"}  >
+    <Stack zIndex={10} boxShadow={"lg"} p={["2px", "6px", "10px"]} direction={["row", "column", "column"]} bg={"whitesmoke"}  >
       <Box width={["40%", "100%", "100%", "100%"]} p="10px" bg={"white"}  >
         <Link to={`/products/${path}/details/${_id}`}>
           <Image h={["80px", "100px", "120px", "150px"]} m={"auto"} alignSelf={"center"} src={image} alt="product image" />

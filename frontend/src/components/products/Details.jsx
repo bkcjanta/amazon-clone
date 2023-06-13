@@ -1,5 +1,4 @@
-import { Badge, Box, Button, Divider, HStack, Heading, Image, Select, SimpleGrid, Stack, Text } from '@chakra-ui/react';
-import axios from 'axios';
+import { useToast, Badge, Box, Button, Divider, HStack, Heading, Image, Select, SimpleGrid, Stack, Text } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react'
 import { useParams, useLocation } from "react-router-dom"
 import ReactStarsRating from 'react-awesome-stars-rating';
@@ -7,15 +6,22 @@ import "./products.css"
 import { HiLockClosed, HiOutlineLocationMarker } from "react-icons/hi"
 import { CiPercent } from "react-icons/ci"
 import ProductCard from './ProductCard';
-import { IoIosArrowForward } from "react-icons/io"
 import Carousel from 'better-react-carousel'
 import Footer from '../Footer/Footer';
 import Loading from '../Loading';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../../AxiosConfig';
 import { useDispatch } from 'react-redux';
 import { loginFailure } from '../../reducers/userSlice';
+import success from '../../assets/success.gif'
+import { cartFailure } from '../../reducers/cartSlice';
+import Navbar from '../navbar/Navbar';
+import done from "../../assets/done.gif"
+import useGetCartData from '../../hookes/useGetCartData';
+import useAxios from '../../hookes/useAxios';
+import { axiosApi } from '../../AxiosConfig';
+
+
 
 export const Details = () => {
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -28,38 +34,59 @@ export const Details = () => {
         { tag: "Partner Offers", des: "Get GST invoice and save up to 28% on business purchases.", no: 1 }
     ]
 
-    const dispatch = useDispatch()
     let location = useLocation()
     const path = location.pathname.split("/")[2]
     const { _id } = useParams();
     const [data, setData] = useState("")
     const [related_data, setRelated_data] = useState([])
     const [isLoading, setIsLoading] = useState(false);
-    const [page, setPage] = useState(0);
     const [qty, setQty] = useState(1);
+    const [isAdded, setIsAdded] = useState(false);
     const navigate = useNavigate();
-    useEffect(() => {
-        setPage(0)
-        setIsLoading(true)
-        axios.get(`/products/${path}/details/${_id}`)
-            .then((res) => {
-                console.log(res.data)
-                setData(res.data)
-                setIsLoading(false)
-            })
-        api.get(`/products/${path}`)
-            .then((res) => {
-                setRelated_data(res.data.data)
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+    const { getCartData } = useGetCartData();
+    const { axiosPrivate } = useAxios();
+    const [loading, setLoading] = useState(false)
 
+    useEffect(() => {
+        if (!!_id) {
+            axiosApi.get(`/products/${path}/details/${_id}`)
+                .then((res) => {
+                    // console.log(res.data)
+                    setData(res.data)
+                })
+            axiosApi.get(`/products/${path}`)
+                .then((res) => {
+                    setRelated_data(res.data.data)
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+        }
     }, [_id]);
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [])
+
+    const handleBuyNow = async () => {
+        try {
+            setIsLoading(true);
+            const obj = { ...data, quantity: qty }
+            await axiosPrivate.post(`/cart`, obj)
+            setIsAdded(true);
+            setIsLoading(false);
+            navigate("/cart");
+            return
+
+
+        } catch (error) {
+            console.log(error);
+            alert("Something went wrong");
+            setIsLoading(false);
+        }
+    }
+
+
 
 
     const backToTop = () => {
@@ -68,46 +95,48 @@ export const Details = () => {
     }
 
     const addToCart = async () => {
-        if (!Cookies.get("refreshToken")) {
-
-        }
+        setLoading(true);
         try {
             const obj = { ...data, quantity: qty }
-            let res = await api.post(`/cart`, obj)
-            console.log(res)
-            navigate("/cart")
-
+            let res = await axiosPrivate.post(`/cart`, obj)
+            console.log(res.data);
+            setIsAdded(true);
+            setLoading(false);
+            getCartData();
         } catch (error) {
-            if (error.status === 401) {
-                dispatch(loginFailure())
-                navigate("/user/login")
-            }
+            console.log(error)
+            alert("Something went wrong");
+            setLoading(false);
+
         }
+
+
 
     }
 
 
     return (
         <Box>
+
             {
-                !isLoading ?
+                data.title ?
 
                     <Stack mb={"130px"} >
                         <Box w={"100%"} boxShadow={"2xl"}> <Image m={"auto"} src='https://m.media-amazon.com/images/I/21neM1UGaYL.jpg' />
                         </Box>
-                        <HStack mt={"1rem"} p={"1rem"} spacing={1} justifyContent="space-between" >
+                        <Box display={"flex"} flexDirection={["column", "row", "row"]} mt={"1rem"} p={"1rem"} spacing={1} justifyContent="space-between" >
 
-                            <HStack alignSelf="flex-start" p={"1rem"} spacing={20} h={"500px"} w={"50%"} >
-                                <Box boxShadow={"2xl"} p={"1rem"} border="2px" borderColor={"yellow.500"} alignSelf={"flex-start"} w={"16%"} h={"100px"} >
+                            <HStack alignSelf="flex-start" p={["0rem", ".5rem", "1rem"]} spacing={20} h={["300px", "400px", "500px"]} w={["100%", "100%", "50%"]} >
+                                <Box boxShadow={"2xl"} p={["0rem", ".5rem", "1rem"]} border="2px" borderColor={"yellow.500"} alignSelf={"flex-start"} w={"16%"} h={"100px"} >
                                     <Image m={"auto"} objectFit={"cover"} h={"60px"} src={data.image}></Image>
                                 </Box>
-                                <Box w={"50%"} p={"1rem"} id="Img" mt={"-5rem"} boxShadow={"2xl"} >
-                                    <Image m={"auto"} src={data.image}></Image>
+                                <Box w={"50%"} p={["0rem", ".5rem", "1rem"]} id="Img" mt={"-5rem"} boxShadow={"2xl"} >
+                                    <Image m={"auto"} h={"200px"} src={data.image}></Image>
                                 </Box>
                             </HStack>
-                            <Stack direction={"row"} alignSelf={"flex-start"} w={"50%"}>
-                                <Stack px={"1rem"} pb={"1rem"} w="400px" boxShadow={"md"} alignSelf="baseline">
-                                    <Text fontSize={"24px"} fontWeight={"bold"} >{data.title}</Text>
+                            <Stack direction={"row"} alignSelf={"flex-start"} w={["100%", "50%"]}>
+                                <Stack p={["0rem", ".5rem", "1rem"]} pb={"1rem"} w="400px" boxShadow={"md"} alignSelf="baseline">
+                                    <Text fontSize={["16px", "18px", "24px"]} fontWeight={"bold"} >{data.title}</Text>
                                     <HStack>
                                         <ReactStarsRating
                                             count={5}
@@ -122,7 +151,7 @@ export const Details = () => {
                                     <Divider color={"grey"} />
                                     <Text fontWeight={"bold"} color="rgb(204,12,57)">Deal of the day</Text>
                                     <HStack>
-                                        <Text color='rgb(204,12,57)' fontSize={"30px"} p={1}>-{Math.floor(((data.mrp - data.price) / data.mrp) * 100)}% </Text>
+                                        <Text color='rgb(204,12,57)' fontSize={"30px"} p={["0rem", ".5rem", "1rem"]}>-{Math.floor(((data.mrp - data.price) / data.mrp) * 100)}% </Text>
                                         <Text fontSize={"30px"} fontWeight={"semibold"}>₹{new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 4 }).format(data.price)} </Text>
                                     </HStack>
                                     <Text fontSize={"14px"} >M.R.P.:<s> ₹{new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 4 }).format(data.mrp)}.00</s> </Text>
@@ -136,7 +165,7 @@ export const Details = () => {
                                         </HStack>
                                         <SimpleGrid direction={"row"} columns={3} spacing={2} >
                                             {offers.map((e, i) =>
-                                                <Stack fontSize={"12px"} boxShadow={"lg"} p={"5px"} _hover={{ boxShadow: "2xl" }} transition={"ease-in"}  >
+                                                <Stack key={i} fontSize={"12px"} boxShadow={"lg"} p={"5px"} _hover={{ boxShadow: "2xl" }} transition={"ease-in"}  >
                                                     <Text fontWeight={"bold"} fontSize={"12px"}>{e.tag}</Text>
                                                     <Text>{e.des}</Text>
                                                     <Text _hover={{ "cursor": "pointer" }} color={"green"}  >  {e.no} Offers</Text>
@@ -170,15 +199,15 @@ export const Details = () => {
                                             <option value={9}>9</option>
                                         </Select>
                                     </HStack>
-                                    <Button bg={"rgb(255,216,20)"} _hover={{ bg: "rgb(234, 196, 6)" }} onClick={addToCart} >Add to Cart</Button>
-                                    <Button bg={"rgb(255,164,28)"} _hover={{ bg: "rgb(240, 148, 10)" }}>Buy Now</Button>
+                                    <Button isLoading={loading} disabled={isLoading} size={"sm"} bg={"rgb(255,216,20)"} _hover={{ bg: "rgb(234, 196, 6)" }} onClick={addToCart} >Add to Cart</Button>
+                                    <Button disabled={loading} isLoading={isLoading} size={"sm"} bg={"rgb(255,164,28)"} _hover={{ bg: "rgb(240, 148, 10)" }} onClick={handleBuyNow}>Buy Now</Button>
                                     <HStack>
                                         <HiLockClosed />
                                         <span>Secure transaction</span>
                                     </HStack>
                                 </Stack>
                             </Stack>
-                        </HStack>
+                        </Box>
                         <Divider h={"10px"} />
                         <Stack px={"4rem"} mb={"150px"}>
                             <Heading textAlign={"left"}>Products related to this item</Heading>
@@ -209,6 +238,29 @@ export const Details = () => {
 
                     :
                     <Loading />
+            }
+
+            {/* product added to cart message */}
+
+            {
+                isAdded ?
+                    <Box id='overlay'>
+                        <Box borderRadius={"10px"} border={"1px"} borderColor={"yellow.400"} p={2} boxShadow={"2xl"} width={["250px", "300px", "400px"]} h={"fit-content"} bg={"white"} display={"flex"} justifyContent={"center"} flexDirection={"column"} alignItems={"center"}>
+                            <Text textAlign={"center"} color={"green"} fontSize={["lg", "xl", "2xl"]}>Product added to card.</Text>
+                            <Image src={done} />
+                            <Box width={"100%"} display={"flex"} justifyContent={"space-around"}>
+                                <Button size={"sm"} colorScheme='yellow' onClick={() => {
+
+                                    navigate(`/products/${path}`);
+                                }} >Continue Shopping</Button>
+                                <Button size={"sm"} colorScheme='yellow' onClick={() => {
+
+                                    navigate("/cart");
+                                }}>Goto cart</Button>
+                            </Box>
+                        </Box>
+                    </Box>
+                    : null
             }
 
 

@@ -1,112 +1,89 @@
-import { Badge, Box, Button, Divider, Grid, GridItem, HStack, Heading, Image, Select, Stack, Text } from '@chakra-ui/react'
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { api } from '../../AxiosConfig';
+import { Box, Button, Divider, Heading, Image, Stack, Text } from '@chakra-ui/react'
+import React, { useEffect, } from 'react'
+import { useSelector } from 'react-redux'
+import { axiosApi } from '../../AxiosConfig';
 import { Link, useNavigate } from 'react-router-dom';
-import Cookies from "js-cookie"
-import { cartFailure, cartRequest, cartSuccess } from '../../reducers/cartSlice';
-import { loginFailure } from '../../reducers/userSlice';
+import useGetCartData from '../../hookes/useGetCartData';
+import Footer from '../Footer/Footer';
+import useAxios from '../../hookes/useAxios';
+import Loading from '../Loading';
+import { wait } from '@testing-library/user-event/dist/utils';
 
 
 
 
 
 const Cart = () => {
-    const [cart, setCart] = useState([]);
     const navigate = useNavigate();
-    const dispatch = useDispatch();
     const { cartItems } = useSelector(state => state.cart)
+    const { isAuth } = useSelector(state => state.user);
+    const { axiosPrivate } = useAxios();
+    const { getCartData } = useGetCartData();
+    const [loading, setLoading] = React.useState(false);
 
     let total = 0;
     cartItems.forEach((item) => {
         total += item.price * item.quantity;
     })
 
-
-
-
-    const getCartData = () => {
-        if (!Cookies.get("refreshToken")) {
-            dispatch(cartFailure());
-            dispatch(loginFailure());
-            return navigate("/user/login");
-        }
-
-        api.get("/cart").then((res) => {
-            console.log(res.data);
-            dispatch(cartSuccess(res.data.data));
-        }).catch((err) => {
-            dispatch(cartFailure());
-            console.log(err);
-        })
-    }
     useEffect(() => {
         getCartData();
     }, [])
 
-
-
-
     const Inc = (item) => {
-        if (!Cookies.get("refreshToken")) {
-            dispatch(cartFailure());
-            dispatch(loginFailure());
-            return navigate("/user/login");
-        }
-        console.log(item);
+        setLoading(true);
         let quantity = item.quantity + 1;
-
-        api.put("/cart", { _id: item._id, quantity: quantity }).then((res) => {
-            console.log(res.data);
-            getCartData();
+        axiosPrivate.put("/cart", { _id: item._id, quantity: quantity }).then(async (res) => {
+            await getCartData();
+            setLoading(false);
         }).catch((err) => {
             console.log(err);
+            alert("Something went wrong");
+            setLoading(false);
         })
     }
+
     const Dec = (item) => {
-        if (!Cookies.get("refreshToken")) {
-            dispatch(loginFailure());
-            dispatch(cartFailure());
-            return navigate("/user/login");
-        }
-        console.log(item);
+        setLoading(true);
         let quantity = item.quantity - 1;
-        api.put("/cart", { _id: item._id, quantity: quantity }).then((res) => {
-            console.log(res.data);
-            getCartData();
+        axiosPrivate.put("/cart", { _id: item._id, quantity: quantity }).then(async (res) => {
+            await getCartData();
+            setLoading(false);
         }).catch((err) => {
             console.log(err);
+            alert("Something went wrong");
+            setLoading(false);
         })
     }
 
     const Remove = (id) => {
-        if (!Cookies.get("refreshToken")) {
-            dispatch(cartFailure());
-            dispatch(loginFailure());
-            return navigate("/user/login");
-        }
-        api.delete(`/cart/${id}`,).then((res) => {
-            console.log(res.data);
-            getCartData();
+        setLoading(true);
+        axiosPrivate.delete(`/cart/${id}`,).then(async (res) => {
+            await getCartData();
+            setLoading(false);
         }).catch((err) => {
             console.log(err);
+            alert("Something went wrong");
+            setLoading(false);
         })
+
+    }
+
+    const backToTop = () => {
+        window.scrollTo(0, 10);
 
     }
     return (
         <>
             {
-                Cookies.get("refreshToken") ?
+                isAuth ?
                     <>
-                        <Box bg={"rgb(227,230,230)"} w={"100%"} p={30}  >
+                        <Box bg={"rgb(227,230,230)"} w={"100%"} p={[0, 10, 30]}  >
 
-                            <Grid
+                            <Box width={"100%"} display={"flex"} flexDirection={["column", "column", "row"]} justifyContent={"space-between"} p={"10px"} >
 
-                                templateRows='auto'
-                                templateColumns='repeat(6, 1fr)'
-                                gap={10}
-                            >
-                                <GridItem colSpan={4} rowSpan={5} bg='white' p={"10px"} >
+
+                                <Box width={["100%", "100%", "60%"]} display={"flex"} flexDirection={"column"} gap={5} bg='white' p={"10px"} >
                                     <Heading mb={"10px"}>Shoping Cart</Heading>
                                     <Divider />
                                     <Box display={"flex"} h={"50px"} alignItems={"center"} boxShadow={"lg"} p={"10px"} justifyContent={"flex-end"} bg={"white"}  >
@@ -115,25 +92,27 @@ const Cart = () => {
 
                                     </Box>
                                     <Divider mb={"10px"} />
-                                    {cartItems.length && cartItems.map((item, i) => {
+                                    {cartItems?.map((item, i) => {
                                         return (
                                             <Box key={i}>
                                                 <Stack boxShadow={"lg"} p={["2px"]} direction={["row"]} justifyContent={"space-between"} bg={"whitesmoke"}  >
-                                                    <Box width={["40%"]} p="10px" bg={"white"}  >
+                                                    <Box width={["30%", "35%", "40%"]} p="10px" bg={"white"}  >
                                                         <Link to={`/products/${item.category}/details/${item.productID}`}>
-                                                            <Image h={["150px"]} m={"auto"} alignSelf={"center"} src={item.image} alt="product image" />
+                                                            <Image h={["80px", "100px", "150px"]} m={"auto"} alignSelf={"center"} src={item.image} alt="product image" />
                                                         </Link>
                                                     </Box>
 
-                                                    <Box width={["60%"]} display={"flex"} flexDirection={"row"} justifyContent={"space-between"}>
+                                                    <Box width={["70%", "65%", "60%"]} display={"flex"} flexDirection={"row"} justifyContent={"space-between"}>
                                                         <Box width={"80%"} >
-                                                            <Text fontSize={"18px"} className='title'>{item.title}</Text>
 
+                                                            <Link to={`/products/${item.category}/details/${item.productID}`}>
+                                                                <Text fontSize={"18px"} className='title'>{item.title}</Text>
+                                                            </Link>
 
                                                             <Text fontSize={"12px"} >M.R.P.:<s> ₹{new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 4 }).format(item.mrp)}.00</s> </Text>
                                                             <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"}>
                                                                 <label htmlFor="">Quantity :</label>
-                                                                <Box display={"flex"} flexDirection={"row"}>
+                                                                <Box display={"flex"} flexDirection={"row"} alignItems={"center"}>
                                                                     <Button size={"sm"} colorScheme='green' disabled={item.quantity <= 1} onClick={() => Dec(item)}>-</Button>
                                                                     <Text px={"5px"}>
                                                                         {item.quantity}
@@ -157,7 +136,7 @@ const Cart = () => {
                                     )}
 
                                     {
-                                        cartItems.length ?
+                                        cartItems.length !== 0 ?
                                             <>
                                                 <Divider />
                                                 <Box display={"flex"} h={"50px"} alignItems={"center"} boxShadow={"lg"} p={"10px"} justifyContent={"flex-end"} bg={"white"}  >
@@ -166,38 +145,40 @@ const Cart = () => {
 
                                                 </Box>
                                                 <Divider />
-                                            </> : <Heading>Cart is Empty</Heading>
+                                            </> : <Heading fontSize={"md"} textAlign={"center"}>Cart is Empty</Heading>
                                     }
 
-                                </GridItem>
-                                <GridItem colSpan={2} rowSpan={1} bg='papayawhip' >
-                                    <h1>bhdbhwbdehwhbdh</h1>
-                                    <h1>bhdbhwbdehwhbdh</h1>
-                                    <h1>bhdbhwbdehwhbdh</h1>
-                                    <h1>bhdbhwbdehwhbdh</h1>
-                                    <h1>bhdbhwbdehwhbdh</h1>
-                                    <h1>bhdbhwbdehwhbdh</h1>
-                                    <h1>bhdbhwbdehwhbdh</h1>
-                                    <h1>bhdbhwbdehwhbdh</h1>
-                                    <h1>bhdbhwbdehwhbdh</h1>
-                                    <h1>bhdbhwbdehwhbdh</h1>
-                                    <h1>bhdbhwbdehwhbdh</h1>
-                                    <h1>bhdbhwbdehwhbdh</h1>
+                                </Box>
+                                <Box w={["100%", "100%", "30%"]}   >
+                                    <Box bg='white' position={"sticky"} top={"120px"} right={"50px"}   >
+                                        <Divider />
+                                        <Box p={"10px"} display={"flex"} flexDirection={"column"} gap={5} justifyContent={"center"} alignItems={"center"}>
+                                            <Text textAlign={"center"} fontSize={"14px"} color={"green"}>
+                                                Your order is eligible for FREE Delivery. Select this option at checkout. Details</Text>
+                                            <Box >
+                                                <span style={{ fontSize: "18px" }}>Sub-total {`(${cartItems.length} Items)`} : </span>
+                                                <span style={{ fontSize: "18px", fontWeight: "bold" }}> ₹{total}</span>
+                                            </Box>
+                                            <Button disabled={!cartItems.length} w={"80%"} colorScheme='yellow' onClick={() => navigate("/user/checkout")}> Proceed to Buy</Button>
+                                        </Box>
+                                        <Divider />
 
-                                </GridItem>
-                                <GridItem colSpan={2} bg='red' >
-                                    <h1>bhdbhwbdehwhbdh</h1>
-                                    <h1>bhdbhwbdehwhbdh</h1>
-                                    <h1>bhdbhwbdehwhbdh</h1>
-                                    <h1>bhdbhwbdehwhbdh</h1>
-                                    <h1>bhdbhwbdehwhbdh</h1>
-                                </GridItem>
+                                    </Box>
 
-                            </Grid>
+                                </Box>
+
+                            </Box>
                         </Box>
+                        <Footer backToTop={backToTop} />
                     </>
                     : <></>
             }
+
+
+            {
+                loading ? <Loading /> : <></>
+            }
+
         </>
     )
 }

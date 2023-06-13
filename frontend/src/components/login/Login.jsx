@@ -1,41 +1,35 @@
-import React, { useState } from 'react'
-import "./style.css"
-import logo from "./logo.png"
-import { Box, Button, Divider, HStack, Heading, Image, Input, Stack, Text } from '@chakra-ui/react'
-import axios from 'axios'
-import { useCookies } from 'react-cookie';
-import { useToast } from '@chakra-ui/react'
-import { Link } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
-import { loginFailure, loginRequest, loginSuccess } from '../../reducers/userSlice'
-import { api } from '../../AxiosConfig'
-import { useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
-import Cookies from 'js-cookie'
-import Loading from '../Loading'
+import { useState } from 'react';
+import "./style.css";
+import logo from "./logo.png";
+import { Box, Button, Image, Input, Stack, Text, useToast } from '@chakra-ui/react';
+import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginFailure, loginRequest, loginSuccess } from '../../reducers/userSlice';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import Cookies from 'js-cookie';
+import Loading from '../Loading';
+import useGetCartData from '../../hookes/useGetCartData';
+import { axiosApi } from '../../AxiosConfig';
+
+
+
+
+
 export const Login = () => {
-  const [email, setEmail] = useState("test@gmail.com")
-  const [password, setPassword] = useState("test123")
+  const [email, setEmail] = useState("demo@gmail.com");
+  const [password, setPassword] = useState("demo@123");
+  const [isLoad, setIsLoad] = useState(false);
   const toast = useToast();
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const [isLoad, setIsLoad] = useState(true)
-  // const [cookies, setCookie, removeCookie] = useCookies("refreshToken");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { loading } = useSelector(state => state.user)
+  const { getCartData } = useGetCartData();
 
 
 
-  useEffect(() => {
-    setIsLoad(true)
-    console.log(Cookies.get("refreshToken"))
-    if (Cookies.get("refreshToken")) {
-      return navigate("/")
-    } else {
-      setIsLoad(false)
-    }
-  }, [dispatch])
 
-
-  const { loading, error, user, token } = useSelector(state => state.user)
 
   const handleLogin = (url) => {
     if (email === "" || password === "") {
@@ -51,40 +45,31 @@ export const Login = () => {
     }
 
     dispatch(loginRequest())
-    axios.post('http://localhost:8080/user/login', {
-      email,
-      password
-    }, { withCredentials: true }).then((res) => {
-      console.log(res)
-      dispatch(loginSuccess(res.data.user))
-      toast({
-        title: "Login successfully.",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-        position: "top-right"
-      })
-      for (let i = 0; i < 5; i++) {
-        navigate(-1)
-      }
-      return
+    axiosApi.post('https://thoughtful-colt-cuff.cyclic.app/user/login', { email, password }, { withCredentials: true })
+      .then((res) => {
+        console.log(res)
+        dispatch(loginSuccess(res.data.user))
+        getCartData()
 
-    }).catch((err) => {
-      dispatch(loginFailure())
-      console.log(err)
-      toast({
-        title: `${err.response.data.msg}.`,
-        description: "Please try again.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "top-right"
+        navigate("/")
+
+
+      }).catch((err) => {
+        dispatch(loginFailure())
+        console.log(err)
+        toast({
+          title: `${err.response.data.msg}.`,
+          description: "Please try again.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top-right"
+        })
       })
-    })
+
+
+
   }
-
-
-
 
 
 
@@ -105,7 +90,7 @@ export const Login = () => {
                   </Box>
                   <Box>
                     <span style={{ "fontSize": "14px", "fontWeight": "bold" }}>Password</span>
-                    <Input value={password} onChange={(e) => setPassword(e.target.value)} borderColor={"black"} boxShadow={"lg"} focusBorderColor={"rgb(240, 175, 12)"} size={"sm"} />
+                    <Input value={password} type='password' onChange={(e) => setPassword(e.target.value)} borderColor={"black"} boxShadow={"lg"} focusBorderColor={"rgb(240, 175, 12)"} size={"sm"} />
 
                   </Box>
                   <Button isLoading={loading} onClick={handleLogin} size={"sm"} bg={"rgb(241,198,91)"} border={"1px"} _hover={{ bg: "rgb(241, 181, 29)" }} w={"100%"}>Sign in</Button>

@@ -5,7 +5,8 @@ const initialState = {
     accessToken: localStorage.getItem("accessToken") || "",
     loading: false,
     error: false,
-    isAuth: +(localStorage.getItem("isAuth")) || 0
+    isAuth: +(localStorage.getItem("isAuth")) || 0,
+    userAddress: [],
 };
 
 const userSlice = createSlice({
@@ -19,6 +20,8 @@ const userSlice = createSlice({
             state.user = {};
             state.accessToken = "";
             state.loading = true;
+            state.error = false;
+            state.isAuth = 0;
         },
         loginSuccess: (state, action) => {
             localStorage.setItem("user", JSON.stringify(action.payload));
@@ -40,11 +43,21 @@ const userSlice = createSlice({
             state.loading = false;
             state.error = true;
             state.isAuth = 0;
-        }
+            state.userAddress = [];
+        },
+        addressRequest: (state, action) => {
+            state.userAddress = [];
+        },
+        addressSuccess: (state, action) => {
+            state.userAddress = action.payload;
+        },
+        addressFailure: (state, action) => {
+            state.userAddress = [];
+        },
 
     }
 })
-export const { loginRequest, loginSuccess, loginFailure } = userSlice.actions;
+export const { loginRequest, loginSuccess, loginFailure, addressFailure, addressRequest, addressSuccess } = userSlice.actions;
 
 export default userSlice.reducer;
 
