@@ -3,8 +3,8 @@ export const axiosApi = axios.create({
     withCredentials: true,
     baseURL: "https://thoughtful-colt-cuff.cyclic.app",
     headers: { "Content-Type": "application/json" },
-});
 
+});
 
 export const api = axios.create({
     withCredentials: true,

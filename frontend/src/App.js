@@ -26,9 +26,9 @@ function App() {
     const getAccessToken = async () => {
       try {
         const res = await axiosApi.get(`/accesstoken/`, { withCredentials: true })
+
+        await getCartData();
         dispatch(loginSuccess(res.data.user));
-        getCartData()
-        console.log(res.data.user)
       } catch (error) {
         dispatch(loginFailure());
         console.log(error);
@@ -47,8 +47,6 @@ function App() {
             checkout ? <CheckoutNav /> : <Navbar />
           }
           <AllRoutes />
-
-          {/* <Footer /> */}
         </Box> :
         <Loading />
 

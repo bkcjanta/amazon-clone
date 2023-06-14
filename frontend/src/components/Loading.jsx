@@ -5,26 +5,26 @@ import "./loading.css"
 const Loading = () => {
     return (
         <div id='loading-overlay'>
-            {/* <div class="col-3">
-                <div class="snippet" data-title="dot-floating">
-                    <div class="stage">
-                        <div class="dot-floating"></div>
+            {/* <div className="col-3">
+                <div className="snippet" data-title="dot-floating">
+                    <div className="stage">
+                        <div className="dot-floating"></div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-3">
-                <div class="snippet" data-title="dot-pulse">
-                    <div class="stage">
-                        <div class="dot-pulse"></div>
+            <div className="col-3">
+                <div className="snippet" data-title="dot-pulse">
+                    <div className="stage">
+                        <div className="dot-pulse"></div>
                     </div>
                 </div>
             </div> */}
 
-            <div class="col-3">
-                <div class="snippet" data-title="dot-windmill">
-                    <div class="stage">
-                        <div class="dot-windmill"></div>
+            <div className="col-3">
+                <div className="snippet" data-title="dot-windmill">
+                    <div className="stage">
+                        <div className="dot-windmill"></div>
                     </div>
                 </div>
             </div>

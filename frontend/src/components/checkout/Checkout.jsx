@@ -11,6 +11,7 @@ import useGetCartData from '../../hookes/useGetCartData';
 import useLogout from '../../hookes/useLogout';
 import useGetAddress from '../../hookes/useGetAddress';
 import useAxios from '../../hookes/useAxios';
+import { EditIcon } from '@chakra-ui/icons';
 
 
 const Checkout = () => {
@@ -411,18 +412,18 @@ const Checkout = () => {
                         !toogleAddress ? <Text fontSize={"20px"} fontWeight={"semibold"} mb={"5px"}>Select Delivery Address : </Text> : null
                     }
                     {
-                        !toogleAddress ? <VStack w={"100%"} p={[0, 2, 5]} alignItems={"flex-start"} boxShadow={"2xl"} >
+                        !toogleAddress ? <VStack w={"100%"} p={[3, 4, 5]} alignItems={"flex-start"} boxShadow={"2xl"} >
                             <RadioGroup value={selectedOption} onChange={handleChange}  >
                                 <Box display={"flex"} flexDirection={"column"} gap={"10px"} >
                                     {userAddress?.map((address, i) => (
                                         <Box key={i}>
                                             <Divider />
 
-                                            <Box display={"flex"} gap={[1, 2, 5]} >
+                                            <Box display={"flex"} gap={[2, 2, 5]} my="5px" >
                                                 <Radio textAlign={"center"} alignItems={"baseline"} value={JSON.stringify(address)}>
                                                     <span style={{ fontWeight: "bold" }}>{address.fullName}</span> {address.flat}, {address.area}, {address.landmark}, {address.town}, {address.state}, {address.zip}, {address.country}, Mobile No.- {address.mobile}
                                                 </Radio>
-                                                <Text ml={"20px"} _hover={{ "cursor": "pointer" }} color={"blue"} onClick={() => handleEdit(address)} >Edit</Text>
+                                                <EditIcon h={"fit-content"} ml={"20px"} _hover={{ "cursor": "pointer" }} color={"blue.400"} onClick={() => handleEdit(address)} >Edit</EditIcon>
                                             </Box>
                                             <Divider />
                                         </Box>
@@ -438,7 +439,7 @@ const Checkout = () => {
 
 
                             <>
-                                <Box p={[1, 3, 5]} w={"100%"} boxShadow={"2xl"}>
+                                <Box p={[2, 3, 5]} w={"100%"} boxShadow={"2xl"}>
                                     <Text fontSize={"20px"} fontWeight={"semibold"} mb={"20px"}>Selected Delivery Address : </Text>
                                     <Divider />
                                     <Box display={"flex"} gap={5} >
@@ -688,12 +689,12 @@ const Checkout = () => {
                                         color='blue.500'
                                         size='xl'
                                     />
-                                    <Text fontSize={"xl"} color={"blue.500"}>Please wait...</Text>
-                                    <Text fontSize={"xl"} color={"blue.500"}>Please do not press Back or Refresh</Text>
+                                    <Text textAlign={"center"} fontSize={"xl"} color={"blue.500"}>Please wait...</Text>
+                                    <Text textAlign={"center"} fontSize={"xl"} color={"blue.500"}>Please do not press Back or Refresh</Text>
                                 </Box> :
                                     <Box boxShadow={"base"} border={"1px"} borderRadius={"10px"} borderColor={"#919191"} borderBottomStyle={"ridge"} p={2} width={["300px", "400px", "400px"]} h={["250px", "300px", "400px"]} bg={"white"} display={"flex"} justifyContent={"center"} flexDirection={"column"} alignItems={"center"}>
-                                        <Text color={"green"} fontSize={["lg", "xl", "2xl"]}>Thank you for shopping</Text>
-                                        <Text color={"green"} fontSize={["lg", "xl", "2xl"]}>Your order is successfully placed.</Text>
+                                        <Text textAlign={"center"} color={"green"} fontSize={["lg", "xl", "2xl"]}>Thank you for shopping</Text>
+                                        <Text textAlign={"center"} color={"green"} fontSize={["lg", "xl", "2xl"]}>Your order is successfully placed.</Text>
                                         <Image src={done} />
                                         <Box width={"100%"} display={"flex"} justifyContent={"space-around"}>
                                             <Button size={"sm"} colorScheme='yellow' onClick={() => {

@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import "./style.css"
-import axios from 'axios'
 import logo from "./logo.png"
 import { Link } from 'react-router-dom'
-import { Box, Button, Divider, HStack, Heading, Image, Input, Stack, Text, useToast } from '@chakra-ui/react'
+import { Box, Button, Image, Input, Stack, Text, useToast } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
+import { axiosApi } from '../../AxiosConfig'
 export const Signup = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState("");
@@ -36,7 +36,7 @@ export const Signup = () => {
       })
     } else {
       setLoading(true)
-      axios.post('http://localhost:8080/user/signup', {
+      axiosApi.post('/user/signup', {
         name,
         email,
         mobile,
@@ -83,11 +83,11 @@ export const Signup = () => {
             <Stack spacing={3}>
               <Box>
 
-                <Input onChange={(e) => setName(e.target.value)} value={name} placeholder='First and Last Name' borderColor={"black"} boxShadow={"lg"} focusBorderColor={"rgb(240, 175, 12)"} size={"sm"} />
+                <Input type='text' onChange={(e) => setName(e.target.value)} value={name} placeholder='First and Last Name' borderColor={"black"} boxShadow={"lg"} focusBorderColor={"rgb(240, 175, 12)"} size={"sm"} />
               </Box>
               <Box>
 
-                <Input onChange={(e) => setEmail(e.target.value)} value={email} placeholder='Email' borderColor={"black"} boxShadow={"lg"} focusBorderColor={"rgb(240, 175, 12)"} size={"sm"} />
+                <Input type="email" onChange={(e) => setEmail(e.target.value)} value={email} placeholder='Email' borderColor={"black"} boxShadow={"lg"} focusBorderColor={"rgb(240, 175, 12)"} size={"sm"} />
               </Box>
               <Box>
 
@@ -95,11 +95,11 @@ export const Signup = () => {
               </Box>
               <Box>
 
-                <Input onChange={(e) => setPassword(e.target.value)} value={password} placeholder='Password' borderColor={"black"} boxShadow={"lg"} focusBorderColor={"rgb(240, 175, 12)"} size={"sm"} />
+                <Input type="password" onChange={(e) => setPassword(e.target.value)} value={password} placeholder='Password' borderColor={"black"} boxShadow={"lg"} focusBorderColor={"rgb(240, 175, 12)"} size={"sm"} />
                 <span style={{ "fontSize": "12px" }}>Passwords must be at least 6 characters.</span>
               </Box>
               <Box>
-                <Input onChange={(e) => setConfirmPassword(e.target.value)} value={confirmPassword} placeholder='Confirm Password' borderColor={"black"} boxShadow={"lg"} focusBorderColor={"rgb(240, 175, 12)"} size={"sm"} />
+                <Input type="password" onChange={(e) => setConfirmPassword(e.target.value)} value={confirmPassword} placeholder='Confirm Password' borderColor={"black"} boxShadow={"lg"} focusBorderColor={"rgb(240, 175, 12)"} size={"sm"} />
                 <span style={{ "fontSize": "12px" }}>Passwords must be at least 6 characters.</span>
               </Box>
               <Button isLoading={loading} onClick={Signup} size={"sm"} bg={"rgb(241,198,91)"} border={"1px"} _hover={{ bg: "rgb(241, 181, 29)" }} w={"100%"}>Sign Up</Button>

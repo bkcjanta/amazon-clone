@@ -1,4 +1,13 @@
-import { Box, Button, Divider, Heading, Image, Stack, Text } from '@chakra-ui/react'
+import {
+    Box, Button, Divider, Heading, Image, Stack, Text, AlertDialog,
+    AlertDialogBody,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogContent,
+    AlertDialogOverlay,
+    AlertDialogCloseButton,
+    useDisclosure,
+} from '@chakra-ui/react'
 import React, { useEffect, } from 'react'
 import { useSelector } from 'react-redux'
 import { axiosApi } from '../../AxiosConfig';
@@ -8,6 +17,8 @@ import Footer from '../Footer/Footer';
 import useAxios from '../../hookes/useAxios';
 import Loading from '../Loading';
 import { wait } from '@testing-library/user-event/dist/utils';
+import { useDispatch } from 'react-redux';
+import { cartFailure, cartSuccess } from '../../reducers/cartSlice';
 
 
 
@@ -20,6 +31,10 @@ const Cart = () => {
     const { axiosPrivate } = useAxios();
     const { getCartData } = useGetCartData();
     const [loading, setLoading] = React.useState(false);
+    const dispatch = useDispatch();
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const cancelRef = React.useRef()
+    const [id, setId] = React.useState('');
 
     let total = 0;
     cartItems.forEach((item) => {
@@ -27,7 +42,20 @@ const Cart = () => {
     })
 
     useEffect(() => {
-        getCartData();
+        setLoading(true);
+        axiosPrivate.get(`/cart/`, { withCredentials: true })
+            .then((res) => {
+                console.log(res)
+                dispatch(cartSuccess(res.data.data))
+                setLoading(false);
+            }
+            ).catch((err) => {
+                console.log(err)
+                dispatch(cartFailure())
+                setLoading(false);
+            }
+            )
+
     }, [])
 
     const Inc = (item) => {
@@ -56,15 +84,27 @@ const Cart = () => {
         })
     }
 
-    const Remove = (id) => {
+    const Remove = (_id) => {
+        setId(_id);
+        onOpen();
+
+    }
+
+    const handleRemove = () => {
         setLoading(true);
+        onClose();
         axiosPrivate.delete(`/cart/${id}`,).then(async (res) => {
+
             await getCartData();
+            setId('')
             setLoading(false);
+
         }).catch((err) => {
+            onClose();
             console.log(err);
-            alert("Something went wrong");
             setLoading(false);
+            setId('')
+
         })
 
     }
@@ -178,6 +218,39 @@ const Cart = () => {
             {
                 loading ? <Loading /> : <></>
             }
+
+
+            <AlertDialog
+                motionPreset='scale'
+                leastDestructiveRef={cancelRef}
+                onClose={() => {
+                    setId('')
+                    onClose();
+                }}
+                isOpen={isOpen}
+                isCentered
+            >
+                <AlertDialogOverlay />
+
+                <AlertDialogContent>
+                    <AlertDialogHeader>Remove Item</AlertDialogHeader>
+                    <AlertDialogCloseButton />
+                    <AlertDialogBody>
+                        Are you sure you want to delete?
+                    </AlertDialogBody>
+                    <AlertDialogFooter>
+                        <Button ref={cancelRef} onClick={() => {
+                            setId('')
+                            onClose();
+                        }}>
+                            No
+                        </Button>
+                        <Button onClick={handleRemove} colorScheme='red' ml={3}>
+                            Yes
+                        </Button>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
 
         </>
     )

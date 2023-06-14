@@ -1,6 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { api } from '../../AxiosConfig'
-import { Box, Button, Divider, Heading, Image, Stack, Tab, TabIndicator, TabList, TabPanel, TabPanels, Tabs, Text, filter } from '@chakra-ui/react';
+import {
+    Box, Button, Divider, Heading, Image, Stack, Tab, TabIndicator, TabList, TabPanel, TabPanels, Tabs, Text, AlertDialogBody,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogContent,
+    AlertDialogOverlay,
+    AlertDialogCloseButton,
+    useDisclosure,
+    AlertDialog,
+} from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { CheckCircleIcon, WarningIcon } from '@chakra-ui/icons';
 import useAxios from '../../hookes/useAxios';
@@ -11,6 +20,9 @@ const Order = () => {
     const [delivered, setDelivered] = useState([]);
     const [canceled, setCanceled] = useState([]);
     const { axiosPrivate } = useAxios();
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const cancelRef = useRef()
+    const [id, setId] = useState('');
 
     const [loading, setLoading] = useState(false);
 
@@ -37,10 +49,20 @@ const Order = () => {
     }, [])
 
 
-    const handleCancel = async (item) => {
+    const handleConfirm = async (_id) => {
+
+        setId(_id);
+        onOpen();
+
+    }
+
+    const handleCancel = async () => {
         try {
+            onClose();
             setLoading(true);
-            const res = await axiosPrivate.put("/order/cancel", { orderID: item._id });
+            const res = await axiosPrivate.put("/order/cancel", { orderID: id });
+            setId('');
+            setLoading(false);
             console.log(res.data);
             await getOrders();
 
@@ -48,6 +70,8 @@ const Order = () => {
             console.log(err);
             alert("Something went wrong");
         }
+        setLoading(false);
+
     }
 
 
@@ -92,7 +116,7 @@ const Order = () => {
                                                         <Text fontSize={"12px"} >M.R.P.:<s> ₹{new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 4 }).format(item.mrp)}.00</s> </Text>
 
                                                         <Box display={"flex"} mt={"5px"}>
-                                                            <Button size={"sm"} colorScheme='red' isLoading={loading} onClick={() => handleCancel(item)} >Cancel Order</Button>
+                                                            <Button size={"sm"} colorScheme='red' isLoading={loading} onClick={() => handleConfirm(item._id)} >Cancel Order</Button>
                                                         </Box>
                                                     </Box>
                                                     <Text fontWeight={"bold"}>₹{new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 4 }).format(item.price)} </Text>
@@ -201,6 +225,38 @@ const Order = () => {
             {
                 loading ? <Loading /> : null
             }
+
+            <AlertDialog
+                motionPreset='scale'
+                leastDestructiveRef={cancelRef}
+                onClose={() => {
+                    setId('')
+                    onClose();
+                }}
+                isOpen={isOpen}
+                isCentered
+            >
+                <AlertDialogOverlay />
+
+                <AlertDialogContent>
+                    <AlertDialogHeader>Cancel Order</AlertDialogHeader>
+                    <AlertDialogCloseButton />
+                    <AlertDialogBody color={"red"}>
+                        Are you sure you want to Cancel order?
+                    </AlertDialogBody>
+                    <AlertDialogFooter>
+                        <Button ref={cancelRef} onClick={() => {
+                            setId('')
+                            onClose();
+                        }}>
+                            No
+                        </Button>
+                        <Button onClick={handleCancel} colorScheme='red' ml={3}>
+                            Yes
+                        </Button>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </Box>
     )
 }

@@ -6,45 +6,39 @@ import "./navbar.css"
 import { AiOutlineShoppingCart, AiOutlineUser } from "react-icons/ai"
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FaHome, FaUserCircle } from "react-icons/fa"
-import { Link, useLocation, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux';
-import { useCookies } from 'react-cookie'
-import { loginFailure, loginRequest, loginSuccess } from '../../reducers/userSlice';
+import { loginFailure, } from '../../reducers/userSlice';
 import { useNavigate } from 'react-router-dom'
-import { productSuccess } from '../../reducers/productSlice'
 import Cookies from 'js-cookie'
 import { cartFailure } from '../../reducers/cartSlice'
 import useLogout from '../../hookes/useLogout'
 import { axiosApi } from '../../AxiosConfig'
 
 const Navbar = () => {
-    const [cookies, setCookie, removeCookie] = useCookies(['refreshToken'])
     const { isAuth, accessToken, user } = useSelector(state => state.user)
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const { isOpen, onOpen, onClose } = useDisclosure()
     const btnRef = React.useRef()
-    const searchRef = React.useRef()
     const [searchData, setSearchData] = React.useState([])
     const [loading, setLoading] = React.useState(false)
-    const [searchParams, setSearchParams] = useSearchParams()
     const [seachQuery, setSearchQuery] = React.useState("")
     const { logOut } = useLogout()
 
     const { cartItems } = useSelector(state => state.cart)
 
-    // const handleLogout = () => {
-    //     removeCookie('refreshToken');
-    //     dispatch(cartFailure())
-    //     dispatch(loginFailure())
-    //     navigate("/user/login")
-    // }
-    const redirectToLogin = () => {
-        removeCookie('refreshToken');
-        dispatch(cartFailure())
-        dispatch(loginFailure())
+    const handleLogout = async () => {
+        console.log("logout")
+        logOut();
+        return
+    }
+
+    const handleRedirect = () => {
         navigate("/user/login")
     }
+
+
 
     useEffect(() => {
 
@@ -156,7 +150,7 @@ const Navbar = () => {
                                 <Heading fontSize={"lg"}>Setting</Heading>
                                 <Link to={"/user/account"}><Box className='category-side'><Text>Account</Text></Box></Link>
                                 <Box className='category-side'><Text>High Rating</Text></Box>
-                                <Box className='category-side' onClick={cookies.refreshToken ? logOut : logOut}><Text>Logout</Text></Box>
+                                <Box className='category-side' onClick={isAuth ? handleLogout : handleRedirect} ><Text>{isAuth ? "Logout" : "login"}</Text></Box>
                             </Box>
                             <Divider h={"4px"} />
                         </Stack>
@@ -207,7 +201,7 @@ const Navbar = () => {
                                                 <Link to={"/user/orders"}><Text className='account-hover'>Orders</Text></Link>
                                                 <Divider />
                                                 {
-                                                    isAuth ? <Text className='account-hover' onClick={isAuth ? logOut : logOut}>Logout</Text> : null
+                                                    isAuth ? <Text className='account-hover' onClick={handleLogout}>Logout</Text> : null
                                                 }
                                             </Stack>
                                         </Box>
